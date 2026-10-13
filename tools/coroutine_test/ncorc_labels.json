@@ -1,0 +1,28 @@
+{
+ "org": 256,
+ "size": 177,
+ "labels": {
+  "entry": 256,
+  "main_resume": 278,
+  "A_ISLAND": 281,
+  "a_poison": 285,
+  "DRV": 294,
+  "K": 302,
+  "k_poison": 314,
+  "cont": 323,
+  "done": 326,
+  "fail_write": 356,
+  "ptr_A": 398,
+  "ptr_drv": 402,
+  "counter": 406,
+  "trapid": 408,
+  "work": 410,
+  "outbuf": 412,
+  "fname_res": 416,
+  "fname_fail": 424
+ },
+ "n_iters": 1,
+ "alias_paras": 16,
+ "trap_stale_id": 56540,
+ "trap_farsite_id": 43690
+}

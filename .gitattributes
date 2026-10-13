@@ -1,0 +1,10 @@
+* text=auto
+*.cs text eol=crlf
+*.csproj text eol=crlf
+*.slnx text eol=crlf
+*.COM binary
+*.BIN binary
+*.bin binary
+*.png binary
+*.pfc binary
+*.gz binary

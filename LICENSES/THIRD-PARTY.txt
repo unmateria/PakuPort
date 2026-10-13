@@ -1,0 +1,65 @@
+Third-party material in PakuPort
+================================
+
+PakuPort is licensed under the GNU General Public License, version 3 or (at your option) any
+later version. See LICENSE in the repository root and NOTICE.md for why.
+
+
+1. DOSBox-X  (derived code, in the source tree)
+------------------------------------------------
+Source  : https://github.com/joncampbell123/dosbox-x
+License : GNU General Public License, version 2 or (at your option) any later version
+
+Parts of the platform layer (src/PakuPort.Core/Platform/, and some CPU and timing details) are
+ported from DOSBox-X: video BIOS tables and fonts (int10_*.cpp), keyboard scancodes and BIOS
+keyboard rules (keyboard.cpp, bios_keyboard.cpp), DAC expansion (vga_dac.cpp), CRTC semantics,
+the OPL2 synthesizer (dbopl.cpp), the Sound Blaster DSP (sblaster.cpp), PIT/PC speaker timing,
+DOS file-system behaviour (drive_cache.cpp, dos_files.cpp), and more. Each place carries a
+comment naming the DOSBox-X file (and usually the line) it comes from. Because DOSBox-X allows
+"any later version", the combined work is distributed under GPL-3.0-or-later.
+
+
+2. xBRZ  (derived code, in the source tree)
+--------------------------------------------
+Author  : Zenju
+Source  : as included in DOSBox-X (src/libs/xBRZ/)
+License : GNU General Public License, version 3
+
+src/PakuPort.Core/EscaladoXbrz.cs is a C# translation of the RGB path of xBRZ.
+
+
+3. Scale3x  (algorithm only)
+-----------------------------
+src/PakuPort.Core/EscaladoPixelArt.cs implements the Scale3x algorithm, which is in the public
+domain. No third-party code is included.
+
+
+4. NuGet packages  (restored at build time, not stored in this repository)
+---------------------------------------------------------------------------
+Iced 1.21.0                          MIT          https://github.com/icedland/iced
+Microsoft.CodeAnalysis.CSharp 5.3.0  MIT          https://github.com/dotnet/roslyn
+Raylib-cs 8.0.0 (generated ports)    Zlib         https://github.com/ChrisDill/Raylib-cs
+xunit 2.9.2 (tests)                  Apache-2.0   https://github.com/xunit/xunit
+Microsoft.NET.Test.Sdk 17.12.0       MIT          https://github.com/microsoft/vstest
+
+Published ports (`pakuport package`) are self-contained .NET applications and include the .NET
+runtime (MIT) and the native raylib library (Zlib).
+
+
+5. Spice86  (optional external tool, not included)
+---------------------------------------------------
+Source  : https://github.com/OpenRakis/Spice86
+License : Apache License, Version 2.0
+
+The optional, legacy commands `pakuport record`, `build`, `play` and `doctor` drive a separate
+checkout of Spice86 that you provide. No Spice86 code is in this repository. Executables built
+by `pakuport build` reference Spice86 as their runtime and must carry its notice:
+
+   Copyright (c) the Spice86 contributors
+   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software distributed under the
+   License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+   either express or implied. See the License for the specific language governing permissions
+   and limitations under the License.

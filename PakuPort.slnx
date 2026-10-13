@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PakuPort.Cli/PakuPort.Cli.csproj" />
+    <Project Path="src/PakuPort.Core/PakuPort.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PakuPort.Tests/PakuPort.Tests.csproj" />
+  </Folder>
+</Solution>

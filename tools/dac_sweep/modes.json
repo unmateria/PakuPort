@@ -1,0 +1,28 @@
+{
+ "record_bytes": 768,
+ "entries": 256,
+ "total": 3072,
+ "res_base": 8192,
+ "modes": [
+  {
+   "mode": 3,
+   "index": 0,
+   "off": 0
+  },
+  {
+   "mode": 13,
+   "index": 1,
+   "off": 768
+  },
+  {
+   "mode": 18,
+   "index": 2,
+   "off": 1536
+  },
+  {
+   "mode": 19,
+   "index": 3,
+   "off": 2304
+  }
+ ]
+}

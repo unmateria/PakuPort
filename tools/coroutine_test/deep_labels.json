@@ -1,0 +1,27 @@
+{
+ "org": 256,
+ "size": 180,
+ "labels": {
+  "entry": 256,
+  "after_entry": 275,
+  "DISPATCH": 284,
+  "after_disp": 288,
+  "INNER": 297,
+  "CONT": 305,
+  "cont_loop": 317,
+  "fail_write": 357,
+  "ptr_disp": 399,
+  "ptr_inner": 403,
+  "counter": 407,
+  "N": 409,
+  "trapid": 411,
+  "work": 413,
+  "outbuf": 415,
+  "fname_res": 419,
+  "fname_fail": 427
+ },
+ "n_iters": 10000,
+ "driver_sp": 16384,
+ "trap_entry_id": 238,
+ "trap_disp_id": 221
+}

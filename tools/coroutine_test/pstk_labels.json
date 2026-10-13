@@ -1,0 +1,24 @@
+{
+ "org": 256,
+ "size": 163,
+ "labels": {
+  "entry": 256,
+  "loop_head": 273,
+  "loop_chk": 277,
+  "canary_fail": 323,
+  "fail_write": 329,
+  "DRV": 371,
+  "ptr_drv": 386,
+  "counter": 390,
+  "N": 392,
+  "trapid": 394,
+  "save_sp": 396,
+  "outbuf": 398,
+  "fname_res": 402,
+  "fname_fail": 410
+ },
+ "n_iters": 10000,
+ "driver_sp": 16384,
+ "canary": 23205,
+ "trap_canary_id": 187
+}

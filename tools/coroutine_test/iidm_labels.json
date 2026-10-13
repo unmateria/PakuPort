@@ -1,0 +1,22 @@
+{
+ "org": 256,
+ "size": 203,
+ "labels": {
+  "entry": 256,
+  "loop_head": 296,
+  "sp_corrupt": 345,
+  "ISR": 403,
+  "inner": 419,
+  "counter": 424,
+  "isr_ran": 426,
+  "subcount": 428,
+  "init_sp": 430,
+  "trapid": 432,
+  "outbuf": 434,
+  "fname_res": 442,
+  "fname_fail": 450
+ },
+ "n_iters": 0,
+ "pit_div": 1024,
+ "trap_sp_id": 45489
+}

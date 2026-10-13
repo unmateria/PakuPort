@@ -1,0 +1,98 @@
+{
+ "record_bytes": 26,
+ "nreg": 25,
+ "total": 390,
+ "res_base": 8192,
+ "modes": [
+  {
+   "mode": 0,
+   "index": 0,
+   "off": 0,
+   "crtc_base": 980
+  },
+  {
+   "mode": 1,
+   "index": 1,
+   "off": 26,
+   "crtc_base": 980
+  },
+  {
+   "mode": 2,
+   "index": 2,
+   "off": 52,
+   "crtc_base": 980
+  },
+  {
+   "mode": 3,
+   "index": 3,
+   "off": 78,
+   "crtc_base": 980
+  },
+  {
+   "mode": 4,
+   "index": 4,
+   "off": 104,
+   "crtc_base": 980
+  },
+  {
+   "mode": 5,
+   "index": 5,
+   "off": 130,
+   "crtc_base": 980
+  },
+  {
+   "mode": 6,
+   "index": 6,
+   "off": 156,
+   "crtc_base": 980
+  },
+  {
+   "mode": 7,
+   "index": 7,
+   "off": 182,
+   "crtc_base": 948
+  },
+  {
+   "mode": 13,
+   "index": 8,
+   "off": 208,
+   "crtc_base": 980
+  },
+  {
+   "mode": 14,
+   "index": 9,
+   "off": 234,
+   "crtc_base": 980
+  },
+  {
+   "mode": 15,
+   "index": 10,
+   "off": 260,
+   "crtc_base": 948
+  },
+  {
+   "mode": 16,
+   "index": 11,
+   "off": 286,
+   "crtc_base": 980
+  },
+  {
+   "mode": 17,
+   "index": 12,
+   "off": 312,
+   "crtc_base": 980
+  },
+  {
+   "mode": 18,
+   "index": 13,
+   "off": 338,
+   "crtc_base": 980
+  },
+  {
+   "mode": 19,
+   "index": 14,
+   "off": 364,
+   "crtc_base": 980
+  }
+ ]
+}

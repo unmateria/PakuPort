@@ -1,0 +1,23 @@
+{
+ "org": 256,
+ "size": 188,
+ "labels": {
+  "entry": 256,
+  "loop_head": 292,
+  "sp_corrupt": 340,
+  "ISR": 388,
+  "isr_sub": 413,
+  "counter": 415,
+  "isr_ran": 417,
+  "save_sp": 419,
+  "trapid": 421,
+  "outbuf": 423,
+  "fname_res": 427,
+  "fname_fail": 435
+ },
+ "n_iters": 0,
+ "private_sp": 16384,
+ "sp_guard": 32768,
+ "pit_div": 1024,
+ "trap_sp_id": 44461
+}
