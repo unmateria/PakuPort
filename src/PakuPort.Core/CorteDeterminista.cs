@@ -98,6 +98,23 @@ public static class CorteDeterminista
         catch (UnauthorizedAccessException) { }
         Console.Out.Flush();
         Console.Error.Flush();
+        if (Foto)
+        {
+            // The host's render thread presents a few more frames of the frozen guest (with the
+            // remake's HD layers on top), saves screenshot.png and exits. The game thread stays
+            // here: the picture is of exactly this instruction, in any run.
+            Congelado = true;
+            Thread.Sleep(Timeout.Infinite);
+        }
         Environment.Exit(0);
     }
+
+    /// <summary>`PAKU_CORTE_FOTO=1` with `PAKU_AUTOEXIT_INSN`: instead of exiting at the cut, freeze
+    /// the guest and let the host save the COMPOSED screen (game + HD layers) as screenshot.png.
+    /// `PAKU_FB_PNG` gives the guest's own frame; this is what the player would see, at a
+    /// repeatable instant, which is what a before/after comparison of HD art needs.</summary>
+    public static readonly bool Foto = Environment.GetEnvironmentVariable("PAKU_CORTE_FOTO") == "1";
+
+    /// <summary>Set by the game thread when it has frozen at the cut (see <see cref="Foto"/>).</summary>
+    public static volatile bool Congelado;
 }

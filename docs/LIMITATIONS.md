@@ -60,8 +60,10 @@ What does not work, or works with conditions. Every item was measured, not assum
   at a time have no identity there (use `PAKU_PROC_PIXEL`). Games that compose in their own RAM
   pages and never write through the video window produce an empty capture; `capture` detects it
   and stops.
-- **`remake try`** opens a game window and cuts both runs by host time, so its before/after
-  halves can show slightly different moments.
+- **Composed screenshots are exact in the game, not in the HD layer.** `remake try` and
+  `PAKU_CORTE_FOTO` freeze the guest at the same instruction in every run, but the hole-punching
+  of the HD layer depends on how many frames the host presented, so a few pixels at the edges
+  of a replaced figure can differ between two runs.
 
 ## Legal
 

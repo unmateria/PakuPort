@@ -1,5 +1,5 @@
 {
-  "total": 142,
+  "total": 143,
   "sin_documentar": [
     "PAKU_CORPUS_BUCLE_MIN",
     "PAKU_CORPUS_MAXFX",
@@ -40,8 +40,8 @@
       "sitios": [
         "src/PakuPort.Core/CorteDeterminista.cs:25"
       ],
-      "doc": "Instrucciones tras las que se corta, o 0 si no se corta.",
-      "doc_de": "src/PakuPort.Core/CorteDeterminista.cs:23"
+      "doc": "`PAKU_CORTE_FOTO=1` with `PAKU_AUTOEXIT_INSN`: instead of exiting at the cut, freeze the guest and let the host save the COMPOSED screen (game + HD layers) as screenshot.png. `PAKU_FB_PNG` gives the guest's own frame; this is what the player would see, at a repeatable instant, which is what a before/after comparison of HD art needs.",
+      "doc_de": "src/PakuPort.Core/CorteDeterminista.cs:112"
     },
     {
       "nombre": "PAKU_AUTOEXIT_MS",
@@ -343,6 +343,20 @@
       "doc_de": "src/PakuPort.Core/CorteDeterminista.cs:40"
     },
     {
+      "nombre": "PAKU_CORTE_FOTO",
+      "forma": [
+        "=1"
+      ],
+      "ambito": [
+        "motor"
+      ],
+      "sitios": [
+        "src/PakuPort.Core/CorteDeterminista.cs:116"
+      ],
+      "doc": "`PAKU_CORTE_FOTO=1` with `PAKU_AUTOEXIT_INSN`: instead of exiting at the cut, freeze the guest and let the host save the COMPOSED screen (game + HD layers) as screenshot.png. `PAKU_FB_PNG` gives the guest's own frame; this is what the player would see, at a repeatable instant, which is what a before/after comparison of HD art needs.",
+      "doc_de": "src/PakuPort.Core/CorteDeterminista.cs:112"
+    },
+    {
       "nombre": "PAKU_CRUCE_CB",
       "forma": [
         "=1"
@@ -465,7 +479,7 @@
         "motor"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:5495"
+        "src/PakuPort.Cli/Program.cs:5505"
       ],
       "doc": null,
       "doc_de": null
@@ -507,8 +521,8 @@
         "motor"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:5491",
-        "src/PakuPort.Cli/Program.cs:5724"
+        "src/PakuPort.Cli/Program.cs:5501",
+        "src/PakuPort.Cli/Program.cs:5734"
       ],
       "doc": null,
       "doc_de": null
@@ -537,8 +551,8 @@
         "motor"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:5757",
-        "src/PakuPort.Cli/Program.cs:5777",
+        "src/PakuPort.Cli/Program.cs:5767",
+        "src/PakuPort.Cli/Program.cs:5787",
         "src/PakuPort.Core/Cpu.cs:843"
       ],
       "doc": null,
@@ -568,10 +582,10 @@
       ],
       "sitios": [
         "src/PakuPort.Cli/Program.cs:1484",
-        "src/PakuPort.Cli/Program.cs:3715"
+        "src/PakuPort.Cli/Program.cs:3725"
       ],
       "doc": "PAKU_FB_PNG=<fichero>: volcado del framebuffer NATIVO (WxH de juego, sin escala ni aspecto) — la fuente pixel-exacta para jueces y catalogos (el screenshot de ventana sale reescalado y no sirve para recortar sprites 1:1).",
-      "doc_de": "src/PakuPort.Cli/Program.cs:3712"
+      "doc_de": "src/PakuPort.Cli/Program.cs:3722"
     },
     {
       "nombre": "PAKU_FILE_TRACE",
@@ -820,7 +834,7 @@
         "motor"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:5792"
+        "src/PakuPort.Cli/Program.cs:5802"
       ],
       "doc": null,
       "doc_de": null
@@ -1236,11 +1250,11 @@
       ],
       "sitios": [
         "src/PakuPort.Cli/Program.cs:1470",
-        "src/PakuPort.Cli/Program.cs:3698",
+        "src/PakuPort.Cli/Program.cs:3708",
         "src/PakuPort.Core/CorteDeterminista.cs:77"
       ],
       "doc": "PAKU_MEMDUMP=<fichero>: vuelca el MiB de memoria VIVA al terminar. Es la única forma de leer el código que un juego genera o descomprime en runtime (el de la imagen del EXE ya no es el que corre) y de ver dónde ha dejado sus vectores: así se localizó el driver de teclado de un juego de prueba, colgado de INT 15h y no del INT 9.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:3694"
+      "doc_de": "src/PakuPort.Cli/Program.cs:3704"
     },
     {
       "nombre": "PAKU_MEMDUMP_ALTO",
@@ -1252,7 +1266,7 @@
       ],
       "sitios": [
         "src/PakuPort.Cli/Program.cs:1477",
-        "src/PakuPort.Cli/Program.cs:3705"
+        "src/PakuPort.Cli/Program.cs:3715"
       ],
       "doc": "PAKU_MEMDUMP_ALTO=<fichero>: la memoria PLANA (por encima de 1 MiB). En un juego de 32 bits todo lo que importa vive ahi —lo que descomprime al cargar un mapa, sus tablas—, y PAKU_MEMDUMP solo ve el MiB de abajo: buscar ahi y no encontrar nada se lee como «no esta» cuando lo que pasa es que no se ha mirado donde es.",
       "doc_de": "src/PakuPort.Cli/Program.cs:1473"
@@ -1325,7 +1339,7 @@
         "src/PakuPort.Cli/Program.cs:2845"
       ],
       "doc": "PAKU_MOUSE_WIGGLE=1: movimiento sintético en coordenadas de juego (prueba headless del camino de eventos INT 33h sin ratón físico); =2: además clicks.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:3242"
+      "doc_de": "src/PakuPort.Cli/Program.cs:3243"
     },
     {
       "nombre": "PAKU_NOAUDIO",
@@ -1374,7 +1388,7 @@
         "src/PakuPort.Cli/Program.cs:2780"
       ],
       "doc": "Escala y letterbox por frame: cubre cambio de modo de vídeo, F11 y redimensionado. Corrección de aspecto (DOSBox `aspect=true`): un CRT de la época mostraba TODOS estos modos a 4:3 con píxeles NO cuadrados, así que 320x200 y 640x200 hay que estirarlos en vertical (los círculos salen ovalados si no). Ctrl+F11 conmuta; PAKU_NO_ASPECT=1 la apaga. A 4:3 CRT shows EVERY mode at 4:3: displayed ratio w/(h*pixelAspect) == 4/3, so pixelAspect = 0.75*(w/h): 1.2 for 320x200 (DOSBox aspect=true), 0.6 for 320x400 double-scan, 1.35 for 720x400 text. The old reciprocal (4/3)/(w/h) squashed 320x200 to 1.92:1 (mild, went unnoticed) and blew 320x400 up to 0.48:1 (measured on a test game).",
-      "doc_de": "src/PakuPort.Cli/Program.cs:3408"
+      "doc_de": "src/PakuPort.Cli/Program.cs:3409"
     },
     {
       "nombre": "PAKU_NO_DPMI",
@@ -1673,10 +1687,10 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:2890"
+        "src/PakuPort.Cli/Program.cs:2891"
       ],
       "doc": "PAKU_REMAKE_NO_AGUJEREAR=1: la textura HD tapa TODO, como antes del arreglo que destapo una prueba manual. Es el CONTROL NEGATIVO del juez de pantalla presentada (judge_presentado.py): sin una forma de reproducir el fallo a voluntad, un juez que sale verde no ha demostrado que sepa ponerse rojo. No se usa para jugar: congela la imagen.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2886"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2887"
     },
     {
       "nombre": "PAKU_SAMPLE_PC",
@@ -1785,10 +1799,10 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:2872"
+        "src/PakuPort.Cli/Program.cs:2873"
       ],
       "doc": "PAKU_SCREENSHOT_CADA=<s>: captura de la pantalla COMPUESTA (juego + capas HD del remake) cada s segundos, a logs/pantalla-<n>.png. Es la única forma headless de VER lo que el jugador vería: PAKU_FB_PNG vuelca el frame nativo del juego, sin la composición.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:3605"
+      "doc_de": "src/PakuPort.Cli/Program.cs:3606"
     },
     {
       "nombre": "PAKU_SIN_ATAJO_DOS",
@@ -1913,11 +1927,11 @@
       ],
       "sitios": [
         "src/PakuPort.Cli/Program.cs:1221",
-        "src/PakuPort.Cli/Program.cs:3350",
-        "src/PakuPort.Cli/Program.cs:3357"
+        "src/PakuPort.Cli/Program.cs:3351",
+        "src/PakuPort.Cli/Program.cs:3358"
       ],
       "doc": "La pila C# ES la cadena de llamadas del juego (Fn_xxxxx) — con ella un opcode-no-soportado se diagnostica sin arqueología.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:3348"
+      "doc_de": "src/PakuPort.Cli/Program.cs:3349"
     },
     {
       "nombre": "PAKU_TRAZA_EIP_VRAM",
@@ -2042,10 +2056,10 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:2877"
+        "src/PakuPort.Cli/Program.cs:2878"
       ],
       "doc": "PAKU_XBRZ=<2..6>: escalado xBRZ del frame del juego (sustituye a Scale3x si está puesto).",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2876"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2877"
     }
   ]
 }

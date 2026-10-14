@@ -2869,6 +2869,7 @@ const double TypematicDelay = 0.500, TypematicPeriod = 1.0 / 10.9;
 bool typematic = Environment.GetEnvironmentVariable(""PAKU_NO_TYPEMATIC"") != ""1"";
 var _hdTex = new Dictionary<string, Texture2D>(); // PASO 4: texturas HD del remake.json, carga perezosa en el hilo de render
 var _escTex = new Texture2D();          // frame del juego ampliado con Scale3x (PAKU_SCALE3X)
+int _fotoFrames = 0;
 double _capturaCadaS = double.TryParse(Environment.GetEnvironmentVariable(""PAKU_SCREENSHOT_CADA""),
     System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture,
     out var _ccs) ? _ccs : 0;
@@ -3681,6 +3682,15 @@ while (!Raylib.WindowShouldClose())
             $""pantalla={{Raylib.GetScreenWidth()}}x{{Raylib.GetScreenHeight()}}"");
     }}
 
+    // PAKU_CORTE_FOTO: the guest froze at PAKU_AUTOEXIT_INSN; once a few frames of it have been
+    // presented (HD layers included), save the composed screen and leave.
+    if (PakuPort.Core.CorteDeterminista.Congelado && ++_fotoFrames >= 4)
+    {{
+        Raylib.TakeScreenshot(""screenshot.png"");
+        Console.Error.WriteLine(""[CORTE] foto compuesta -> screenshot.png"");
+        Console.Out.Flush(); Console.Error.Flush();
+        Environment.Exit(0);
+    }}
     if (autoExitMs > 0 && runClock.ElapsedMilliseconds >= autoExitMs)
     {{
         int nonBlack = 0;

@@ -5,7 +5,7 @@
 > Comprobar que no se ha quedado desfasado: `python tools/gen_palancas.py --check`
 > (sale distinto de cero si el codigo cambio y esto no; sirve como gate).
 
-**142 palancas** en **36 ficheros**.
+**143 palancas** en **36 ficheros**.
 
 **12 sin documentar** — no tienen ningun comentario que las explique:
 
@@ -40,6 +40,7 @@ Todas estan APAGADAS por defecto y ninguna altera el comportamiento del juego.
 | `PAKU_CORPUS_NOVEDADES` | valor de texto | motor | Core/CorpusRecorder.cs |
 | `PAKU_CORPUS_VENTANA_NOV` | numero | motor | Core/CorpusRecorder.cs |
 | `PAKU_CORTE_EN_INT` | =1 | motor | Core/CorteDeterminista.cs |
+| `PAKU_CORTE_FOTO` | =1 | motor | Core/CorteDeterminista.cs |
 | `PAKU_CRUCE_CB` | =1 | motor | Core/Platform/Int33hHandler.cs |
 | `PAKU_CYCLES` | numero | plantilla | Cli/Program.cs |
 | `PAKU_DIAG_CB` | =1 | motor | Core/Platform/DosPlatform.cs |
@@ -193,13 +194,13 @@ TAREA A — Unpack dinámico como PASO ADICIONAL. Su salida SUSTITUYE al memimag
 
 **SIN DOCUMENTAR** — no hay comentario que la explique.
 
-Usada en: `src/PakuPort.Cli/Program.cs:5491`, `src/PakuPort.Cli/Program.cs:5724`
+Usada en: `src/PakuPort.Cli/Program.cs:5501`, `src/PakuPort.Cli/Program.cs:5734`
 
 #### `PAKU_EXIT_STACK`  ·  =1
 
 **SIN DOCUMENTAR** — no hay comentario que la explique.
 
-Usada en: `src/PakuPort.Cli/Program.cs:5757`, `src/PakuPort.Cli/Program.cs:5777`, `src/PakuPort.Core/Cpu.cs:843`
+Usada en: `src/PakuPort.Cli/Program.cs:5767`, `src/PakuPort.Cli/Program.cs:5787`, `src/PakuPort.Core/Cpu.cs:843`
 
 #### `PAKU_IPLOG_DUMP`  ·  presencia o valor
 
@@ -209,7 +210,7 @@ Usada en: `src/PakuPort.Cli/Program.cs:5757`, `src/PakuPort.Cli/Program.cs:5777`
 
 PAKU_MEMDUMP=<fichero>: vuelca el MiB de memoria VIVA al terminar. Es la única forma de leer el código que un juego genera o descomprime en runtime (el de la imagen del EXE ya no es el que corre) y de ver dónde ha dejado sus vectores: así se localizó el driver de teclado de un juego de prueba, colgado de INT 15h y no del INT 9.
 
-Usada en: `src/PakuPort.Cli/Program.cs:1470`, `src/PakuPort.Cli/Program.cs:3698`, `src/PakuPort.Core/CorteDeterminista.cs:77`
+Usada en: `src/PakuPort.Cli/Program.cs:1470`, `src/PakuPort.Cli/Program.cs:3708`, `src/PakuPort.Core/CorteDeterminista.cs:77`
 
 #### `PAKU_NOAUDIO`  ·  =1
 
@@ -303,11 +304,15 @@ EL CORPUS GUIADO POR COBERTURA (`PAKU_CORPUS_NOVEDADES=<fichero>`). El hueco que
 
 #### `PAKU_AUTOEXIT_INSN`  ·  numero
 
-Instrucciones tras las que se corta, o 0 si no se corta.
+`PAKU_CORTE_FOTO=1` with `PAKU_AUTOEXIT_INSN`: instead of exiting at the cut, freeze the guest and let the host save the COMPOSED screen (game + HD layers) as screenshot.png. `PAKU_FB_PNG` gives the guest's own frame; this is what the player would see, at a repeatable instant, which is what a before/after comparison of HD art needs.
 
 #### `PAKU_CORTE_EN_INT`  ·  =1
 
 `PAKU_CORTE_EN_INT=1`: pasado el limite no se corta en el poll, sino en la PRIMERA interrupcion software que ejecute el programa despues. Para el A/B de un juego TRADUCIDO. Una traduccion cobra sus instrucciones por bloques (ver Original.Instrucciones), asi que en mitad de un bloque su memoria no tiene por que coincidir con la del original en esa misma instruccion: una ya escribio lo que la otra aun no. Justo antes de un `int` las dos tienen que estar igual — la traduccion cobra hasta el `int` incluido y hace antes todo lo que el original habia hecho. Cortar ahi compara lo comparable, y el corte sigue siendo el mismo en cualquier corrida.
+
+#### `PAKU_CORTE_FOTO`  ·  =1
+
+`PAKU_CORTE_FOTO=1` with `PAKU_AUTOEXIT_INSN`: instead of exiting at the cut, freeze the guest and let the host save the COMPOSED screen (game + HD layers) as screenshot.png. `PAKU_FB_PNG` gives the guest's own frame; this is what the player would see, at a repeatable instant, which is what a before/after comparison of HD art needs.
 
 #### `PAKU_HEADLESS`  ·  =1
 
@@ -777,7 +782,7 @@ Usada en: `src/PakuPort.Cli/Program.cs:1045`, `src/PakuPort.Cli/Program.cs:2785`
 
 PAKU_FB_PNG=<fichero>: volcado del framebuffer NATIVO (WxH de juego, sin escala ni aspecto) — la fuente pixel-exacta para jueces y catalogos (el screenshot de ventana sale reescalado y no sirve para recortar sprites 1:1).
 
-Usada en: `src/PakuPort.Cli/Program.cs:1484`, `src/PakuPort.Cli/Program.cs:3715`
+Usada en: `src/PakuPort.Cli/Program.cs:1484`, `src/PakuPort.Cli/Program.cs:3725`
 
 #### `PAKU_INTERP`  ·  presencia o valor
 
@@ -799,13 +804,13 @@ PAKU_LIVE_VRAM=1 presenta siempre la VRAM viva en vez del front buffer capturado
 
 PAKU_MEMDUMP=<fichero>: vuelca el MiB de memoria VIVA al terminar. Es la única forma de leer el código que un juego genera o descomprime en runtime (el de la imagen del EXE ya no es el que corre) y de ver dónde ha dejado sus vectores: así se localizó el driver de teclado de un juego de prueba, colgado de INT 15h y no del INT 9.
 
-Usada en: `src/PakuPort.Cli/Program.cs:1470`, `src/PakuPort.Cli/Program.cs:3698`, `src/PakuPort.Core/CorteDeterminista.cs:77`
+Usada en: `src/PakuPort.Cli/Program.cs:1470`, `src/PakuPort.Cli/Program.cs:3708`, `src/PakuPort.Core/CorteDeterminista.cs:77`
 
 #### `PAKU_MEMDUMP_ALTO`  ·  valor de texto
 
 PAKU_MEMDUMP_ALTO=<fichero>: la memoria PLANA (por encima de 1 MiB). En un juego de 32 bits todo lo que importa vive ahi —lo que descomprime al cargar un mapa, sus tablas—, y PAKU_MEMDUMP solo ve el MiB de abajo: buscar ahi y no encontrar nada se lee como «no esta» cuando lo que pasa es que no se ha mirado donde es.
 
-Usada en: `src/PakuPort.Cli/Program.cs:1477`, `src/PakuPort.Cli/Program.cs:3705`
+Usada en: `src/PakuPort.Cli/Program.cs:1477`, `src/PakuPort.Cli/Program.cs:3715`
 
 #### `PAKU_MOUSE_ABS`  ·  presencia o valor
 
@@ -865,7 +870,7 @@ PAKU_SCREENSHOT_CADA=<s>: captura de la pantalla COMPUESTA (juego + capas HD del
 
 La pila C# ES la cadena de llamadas del juego (Fn_xxxxx) — con ella un opcode-no-soportado se diagnostica sin arqueología.
 
-Usada en: `src/PakuPort.Cli/Program.cs:1221`, `src/PakuPort.Cli/Program.cs:3350`, `src/PakuPort.Cli/Program.cs:3357`
+Usada en: `src/PakuPort.Cli/Program.cs:1221`, `src/PakuPort.Cli/Program.cs:3351`, `src/PakuPort.Cli/Program.cs:3358`
 
 #### `PAKU_WAV_DUMP`  ·  valor de texto
 

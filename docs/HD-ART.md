@@ -80,9 +80,11 @@ Plays the game with the remake on (`PAKU_REMAKE=games/<id>/remake/remake.json`).
 
 ### `pakuport remake try <id> <key> <image.png>`
 
-One image, in the game, before and after side by side, without touching `remake.json`. Note:
-it opens a game window and cuts the two runs by host time, not by instruction, so the two halves
-may show slightly different moments.
+One image, in the game, before and after side by side, without touching `remake.json`. Both
+runs replay the session's tape and stop at the same **instruction** (`--ms` × `cyclesPerMs`),
+with the guest frozen there while the hidden window saves the composed screen
+(`PAKU_CORTE_FOTO=1`), so the two halves show the same instant of the game. Without a tape or a
+fixed speed it falls back to a cut by host time and says so.
 
 ## How the replacement works
 
