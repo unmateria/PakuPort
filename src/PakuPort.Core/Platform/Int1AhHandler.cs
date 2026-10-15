@@ -86,7 +86,7 @@ public sealed class Int1AhHandler
             {
                 var now = _platform is not null
                     ? _platform.Cmos.GetDateTime()
-                    : System.DateTime.Now;
+                    : GuestClock.Now(cpu.CyclesPerMs);
                 cpu.CH = ToBcd((byte)now.Hour);
                 cpu.CL = ToBcd((byte)now.Minute);
                 cpu.DH = ToBcd((byte)now.Second);
@@ -114,7 +114,7 @@ public sealed class Int1AhHandler
             {
                 var now = _platform is not null
                     ? _platform.Cmos.GetDateTime()
-                    : System.DateTime.Now;
+                    : GuestClock.Now(cpu.CyclesPerMs);
                 int year    = now.Year;
                 int century = year / 100;
                 int yearIn  = year % 100;

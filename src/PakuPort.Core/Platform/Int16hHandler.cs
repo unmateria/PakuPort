@@ -97,9 +97,24 @@ public sealed class Int16hHandler
         {
             if (TryPop(out ushort key)) return key;
             if (NonBlockingRead) return 0;
-            _keyReady.Wait(2);
-            if (_platform != null) _platform.MachineTimer.Poll(_platform, cpu, mem);
+            EsperaUnPoco(cpu, mem);
         }
+    }
+
+    /// <summary>One slice of the wait for a key (INT 16h AH=00/10 and the DOS console reads).
+    /// DOSBox-X does not park there: AH=00 with an empty buffer re-enters itself through a small
+    /// idle loop "to allow for irqs to happen" (bios_keyboard.cpp:1337), so emulated time keeps
+    /// running. Under a tape the guest clock only moves with instructions and none run here, so it
+    /// is advanced by the slice: without that IRQ0 (the music, INT 1Ch) stopped and a cut by
+    /// PAKU_AUTOEXIT_INSN never came while the game waited. `PAKU_RELOJ_PARED=espera` undoes it.</summary>
+    void EsperaUnPoco(Cpu cpu, Memory mem)
+    {
+        const int SliceMs = 2;
+        _keyReady.Wait(SliceMs);
+        if (InputTape.RelojDelInvitado("espera") && cpu.CyclesPerMs > 0)
+            Cpu.TickCount += (long)SliceMs * cpu.CyclesPerMs;
+        if (_platform != null) _platform.MachineTimer.Poll(_platform, cpu, mem);
+        if (CorteDeterminista.Insn > 0) CorteDeterminista.Comprueba(cpu);
     }
 
     private void Handle(Cpu cpu, Memory mem)
@@ -144,8 +159,7 @@ public sealed class Int16hHandler
                     }
                     else
                     {
-                        _keyReady.Wait(2);
-                        if (_platform != null) _platform.MachineTimer.Poll(_platform, cpu, mem);
+                        EsperaUnPoco(cpu, mem);
                     }
                 }
 

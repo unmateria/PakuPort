@@ -256,8 +256,10 @@ public static class Int10hHandler
             case 0x0E: // Teletype write
                 // dosbox-x int10_char.cpp INT10_TeletypeOutput: in text modes the BIOS
                 // teletype writes the character ONLY (cell attribute preserved);
-                // useattr = CurMode->type != M_TEXT.
-                Teletype(cpu.AL, cpu.BL, v, useAttr: !IsText(v.VideoMode), back: cpu.BH);
+                // useattr = CurMode->type != M_TEXT. The teletype ignores BH: it writes to the
+                // CURRENT page (BIOSMEM_CURRENT_PAGE, int10_char.cpp:1879), and in mode 13h
+                // WriteChar turns that page into the background colour (back=page).
+                Teletype(cpu.AL, cpu.BL, v, useAttr: !IsText(v.VideoMode), back: _activePage);
                 break;
 
             case 0x0F: // Get video mode

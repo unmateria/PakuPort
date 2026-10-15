@@ -10,6 +10,10 @@ public sealed class Cmos
     private byte _index = 0;
     private readonly byte[] _regs = new byte[128]; // 128 registros CMOS
 
+    /// <summary>Instructions per ms, for the time under a tape (<see cref="GuestClock"/>). The
+    /// port has no CPU at hand; MachineTimer.Poll and FlatServices.ServicioIrq keep it current.</summary>
+    public int CyclesPerMs;
+
     public Cmos() { Init(); }
 
     private void Init()
@@ -28,7 +32,7 @@ public sealed class Cmos
         if (port == 0x70) return _index; // devuelve índice actual (algunos programas leen)
         if (port != 0x71) return 0xFF;
 
-        var now = DateTime.Now;
+        var now = GetDateTime();
         return _index switch
         {
             0x00 => ToBcd(now.Second),
@@ -61,10 +65,10 @@ public sealed class Cmos
     }
 
     /// <summary>
-    /// Devuelve la fecha/hora actual del sistema. Expuesto para que Int1AhHandler pueda
-    /// leer el RTC sin duplicar la logica de DateTime.Now.
+    /// La fecha/hora del RTC: la del sistema, o la del invitado bajo una cinta. Expuesto para que
+    /// Int1AhHandler lea el RTC sin duplicar la logica.
     /// </summary>
-    public DateTime GetDateTime() => DateTime.Now;
+    public DateTime GetDateTime() => GuestClock.Now(CyclesPerMs);
 
     private static byte ToBcd(int v) => (byte)(((v / 10) << 4) | (v % 10));
 }

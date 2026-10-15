@@ -21,9 +21,9 @@ public class BiosDosServiceTests
         return (platform, keyboard, cpu, mem);
     }
 
-    static void Int10(DosPlatform p, Cpu c, Memory m, ushort ax, ushort bx = 0, ushort dx = 0)
+    static void Int10(DosPlatform p, Cpu c, Memory m, ushort ax, ushort bx = 0, ushort dx = 0, ushort cx = 0)
     {
-        c.AX = ax; c.BX = bx; c.DX = dx;
+        c.AX = ax; c.BX = bx; c.DX = dx; c.CX = cx;
         p.Int(0x10, c, m);
     }
 
@@ -38,7 +38,8 @@ public class BiosDosServiceTests
 
     // dosbox-x int10_char.cpp WriteChar, case M_VGA: every pixel of the 8x8 cell is written,
     // glyph bits in the attribute colour and the rest in the background, which in 256-colour
-    // modes is BH. Drawing only the glyph bits made a counter rewritten in place pile its digits.
+    // modes is the "page" argument (back=page). Drawing only the glyph bits made a counter
+    // rewritten in place pile its digits.
     [Fact]
     public void Mode13h_Teletype_RewritingACellLeavesOnlyTheNewCharacter()
     {
@@ -58,17 +59,33 @@ public class BiosDosServiceTests
         Assert.Equal(alone, rewritten);
     }
 
+    // AH=09 passes BH as the page (int10.cpp case 0x09), so BH is the background in mode 13h.
     [Fact]
-    public void Mode13h_Teletype_BackgroundComesFromBH()
+    public void Mode13h_WriteChar_BackgroundComesFromBH()
     {
         var (p, _, c, m) = NewMachine();
         Int10(p, c, m, 0x0013);
         Int10(p, c, m, 0x0200, dx: 0x0000);
-        Int10(p, c, m, 0x0E00 | 'I', bx: 0x050E);              // BL=14 glyph, BH=5 background
+        Int10(p, c, m, 0x0900 | 'I', bx: 0x050E, cx: 1);       // BL=14 glyph, BH=5 background
         var cell = Cell(p, 0, 0);
 
         Assert.All(cell, b => Assert.True(b == 0x0E || b == 0x05, $"pixel {b:X2}"));
         Assert.Contains(cell, b => b == 0x05);
+        Assert.Contains(cell, b => b == 0x0E);
+    }
+
+    // AH=0E ignores BH: INT10_TeletypeOutput passes the CURRENT page from the BDA
+    // (int10_char.cpp:1879), so with page 0 active the background is 0 whatever BH holds.
+    [Fact]
+    public void Mode13h_Teletype_IgnoresBH_BackgroundIsTheCurrentPage()
+    {
+        var (p, _, c, m) = NewMachine();
+        Int10(p, c, m, 0x0013);
+        Int10(p, c, m, 0x0200, dx: 0x0000);
+        Int10(p, c, m, 0x0E00 | 'I', bx: 0x050E);              // garbage BH=5 must not paint
+        var cell = Cell(p, 0, 0);
+
+        Assert.All(cell, b => Assert.True(b == 0x0E || b == 0x00, $"pixel {b:X2}"));
         Assert.Contains(cell, b => b == 0x0E);
     }
 

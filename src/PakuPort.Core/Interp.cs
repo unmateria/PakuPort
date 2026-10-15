@@ -42,7 +42,14 @@ public static class Interp
     /// Lo fija el host exportado desde el game.json.</summary>
     public static Dictionary<int, int>? OverlayStarts;
 
-    public static readonly bool Trace = Environment.GetEnvironmentVariable("PAKU_INTERP_TRACE") == "1";
+    static readonly bool _traceOn = Environment.GetEnvironmentVariable("PAKU_INTERP_TRACE") == "1";
+    // PAKU_INTERP_TRACE_FROM / _TO: limit the trace to a window of the guest clock (TickCount),
+    // so studying one key press does not mean logging the whole boot.
+    static readonly long _traceFrom =
+        long.TryParse(Environment.GetEnvironmentVariable("PAKU_INTERP_TRACE_FROM"), out var tf) ? tf : 0;
+    static readonly long _traceTo =
+        long.TryParse(Environment.GetEnvironmentVariable("PAKU_INTERP_TRACE_TO"), out var tt) ? tt : long.MaxValue;
+    public static bool Trace => _traceOn && Cpu.TickCount >= _traceFrom && Cpu.TickCount <= _traceTo;
 
     /// <summary>PAKU_LOG_FUERA32=1 (la misma palanca que en Interp32): cada escritura que se sale
     /// del espacio, con la instrucción, los selectores y sus descriptores crudos.</summary>
@@ -608,7 +615,7 @@ public static class Interp
             // instruccion saldrian como "nunca ejecutados" y la frontera vendria llena de agujeros
             // que no existen. Apagado es una lectura de un estatico y un salto.
             if (Cobertura.Activo) Cobertura.Marca(linInsn, insn.Length);
-            if (Trace) Console.Error.WriteLine($"[INTERP]   {c.CS:X4}:{ip:X4} {insn} SP={c.SP:X4} DS={c.DS:X4} ES={c.ES:X4} SS={c.SS:X4}");
+            if (Trace) Console.Error.WriteLine($"[INTERP] t={Cpu.TickCount} {c.CS:X4}:{ip:X4} {insn} AX={c.AX:X4} BX={c.BX:X4} CX={c.CX:X4} DX={c.DX:X4} SP={c.SP:X4} DS={c.DS:X4} ES={c.ES:X4} SS={c.SS:X4} F={c.FlagsWord():X4}");
 
             espAntesPf16 = c.ESP; espAntesValido = true;
             switch (insn.Mnemonic)
@@ -2761,6 +2768,11 @@ public static class Interp
         finally
         {
             if (suppressRaw) Memory.SuppressRawBlit = false;
+            // A string op that never reached LogBlit (destination in RAM, CX=0, a fault) must still
+            // close its PBR1 group: left open, the loose writes that follow look like part of it
+            // and build_texto.py, which counts exactly those, never sees them.
+            if (BlitRawLog.Todo && BlitRawLog.GroupOpen)
+                BlitRawLog.CierraGrupo(((uint)c.CS << 16) | insn.IP16, "", null);
         }
     }
 

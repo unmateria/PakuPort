@@ -74,6 +74,7 @@ public sealed class MachineTimer
         // El video necesita el mismo factor instrucciones->ms que el temporizador para poder
         // servir el retrace por el reloj virtual bajo una cinta (VgaPortHandler.StatusRead).
         p.Video.CyclesPerMs = c.CyclesPerMs;
+        p.Cmos.CyclesPerMs = c.CyclesPerMs;
         if (!_sw.IsRunning)
         {
             _sw.Start();

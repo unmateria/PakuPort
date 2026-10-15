@@ -26,7 +26,9 @@ public static class InputTape
     /// <summary>`PAKU_RELOJ_PARED=<que>` — devuelve al RELOJ DE PARED lo que la cinta pasó al del
     /// invitado, para poder medir A/B si algo se rompe con la cinta puesta y no sin ella.
     /// Valores, separados por comas: <c>retrace</c> (la fase de 0x3DA), <c>sb</c> (la IRQ del
-    /// bloque de la Sound Blaster), <c>todo</c>. Sin la variable no cambia nada.
+    /// bloque de la Sound Blaster), <c>hora</c> (fecha y hora, ver GuestClock), <c>espera</c> (el
+    /// tiempo que pasa mientras la BIOS espera una tecla, ver Cpu.PollDeviceWait), <c>todo</c>.
+    /// Sin la variable no cambia nada.
     ///
     /// Existe porque un cambio que solo se activa con la cinta no se puede bisecar de otra forma:
     /// el sintoma aparece justo en la corrida que uno quiere medir.</summary>
@@ -119,6 +121,8 @@ public static class InputTape
             var list = new List<(long, string[])>();
             foreach (var line in File.ReadLines(ReplayPath!))
             {
+                // A tape can be written by hand: blank lines and `#` comments are allowed.
+                if (string.IsNullOrWhiteSpace(line) || line.TrimStart().StartsWith('#')) continue;
                 var f = line.Split(' ');
                 if (f.Length >= 2) list.Add((long.Parse(f[0]), f));
             }

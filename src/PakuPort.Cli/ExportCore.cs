@@ -39,6 +39,7 @@ static class ExportCore
         CopyIfExists(Path.Combine(srcCore, "BlitRawLog.cs"), Path.Combine(coreDir, "BlitRawLog.cs"));
         CopyIfExists(Path.Combine(srcCore, "AudioEventLog.cs"), Path.Combine(coreDir, "AudioEventLog.cs"));
         CopyIfExists(Path.Combine(srcCore, "InputTape.cs"), Path.Combine(coreDir, "InputTape.cs"));
+        CopyIfExists(Path.Combine(srcCore, "GuestClock.cs"), Path.Combine(coreDir, "GuestClock.cs"));
         CopyIfExists(Path.Combine(srcCore, "CorpusRecorder.cs"), Path.Combine(coreDir, "CorpusRecorder.cs"));
         CopyIfExists(Path.Combine(srcCore, "PerfilCapas.cs"), Path.Combine(coreDir, "PerfilCapas.cs"));
         CopyIfExists(Path.Combine(srcCore, "Cobertura.cs"), Path.Combine(coreDir, "Cobertura.cs"));

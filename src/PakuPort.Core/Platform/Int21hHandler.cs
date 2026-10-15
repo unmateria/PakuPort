@@ -396,7 +396,7 @@ public sealed class Int21hHandler
             }
 
             case 0x2A: // Get date
-                var now = DateTime.Now;
+                var now = GuestClock.Now(cpu.CyclesPerMs);
                 cpu.CX = (ushort)now.Year;
                 cpu.DH = (byte)now.Month;
                 cpu.DL = (byte)now.Day;
@@ -408,7 +408,7 @@ public sealed class Int21hHandler
                 break;
 
             case 0x2C: // Get time
-                var t = DateTime.Now;
+                var t = GuestClock.Now(cpu.CyclesPerMs);
                 cpu.CH = (byte)t.Hour;
                 cpu.CL = (byte)t.Minute;
                 cpu.DH = (byte)t.Second;
@@ -1656,7 +1656,7 @@ public sealed class Int21hHandler
         {
             DtaSetupSearch(mem, dta, r.Drive, (byte)searchAttr, "*.*");
             mem.Raw[dta + 0x0D] = 0; mem.Raw[dta + 0x0E] = 0;
-            WriteFindResult(mem, dta, _fs.LabelOf(r.Drive), DosFileSystem.AttrVolume, 0, DateTime.Now);
+            WriteFindResult(mem, dta, _fs.LabelOf(r.Drive), DosFileSystem.AttrVolume, 0, GuestClock.Now(cpu.CyclesPerMs));
             cpu.CF = false; return;
         }
 

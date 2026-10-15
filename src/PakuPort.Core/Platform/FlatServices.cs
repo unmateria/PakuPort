@@ -396,14 +396,15 @@ public sealed class FlatServices
     static readonly bool RelojInvitadoSb =
         Environment.GetEnvironmentVariable("PAKU_SB_RELOJ_INVITADO") == "1";
 
-    static DateTime Ahora() =>
-        IrqDeterminista > 0 || HoraFija ? new DateTime(1994, 6, 1, 12, 0, 0) : DateTime.Now;
+    static DateTime Ahora(Cpu c) =>
+        IrqDeterminista > 0 || HoraFija ? GuestClock.Epoch : GuestClock.Now(c.CyclesPerMs);
 
     public bool ServicioIrq(Cpu c, Memory m, out ushort selector, out uint offset)
     {
         selector = 0; offset = 0;
         var p = Plataforma;
         if (p == null) return false;
+        p.Cmos.CyclesPerMs = c.CyclesPerMs;   // the flat world has its own clock, not MachineTimer.Poll
 
         // Reloj PROPIO, no `MachineTimer.Poll`: aquel DISPARA las ISR el mismo por el camino de
         // 16 bits (FireInterrupt), asi que se comia la IRQ antes de que llegara aqui y el mundo
@@ -712,14 +713,14 @@ public sealed class FlatServices
             // ---- fecha y hora: el arranque de la biblioteca de C las pide siempre ----
             case 0x2A:
             {
-                var t = Ahora();
+                var t = Ahora(c);
                 c.CX = (ushort)t.Year; c.DH = (byte)t.Month; c.DL = (byte)t.Day;
                 c.AL = (byte)t.DayOfWeek;
                 c.CF = false; return true;
             }
             case 0x2C:
             {
-                var t = Ahora();
+                var t = Ahora(c);
                 c.CH = (byte)t.Hour; c.CL = (byte)t.Minute;
                 c.DH = (byte)t.Second; c.DL = (byte)(t.Millisecond / 10);
                 c.CF = false; return true;
