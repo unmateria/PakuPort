@@ -55,11 +55,11 @@
       ],
       "sitios": [
         "src/PakuPort.Cli/Program.cs:1107",
-        "src/PakuPort.Cli/Program.cs:2836",
+        "src/PakuPort.Cli/Program.cs:2844",
         "src/PakuPort.Core/CorteDeterminista.cs:35"
       ],
       "doc": "Verificación automatizada (CI/diagnóstico, genérico): PAKU_NOSPLASH=1     salta el splash (la lógica arranca ya) PAKU_AUTOEXIT_MS=N  cierra tras N ms reportando estado + screenshot.png",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2832"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2840"
     },
     {
       "nombre": "PAKU_AUTOKEYS",
@@ -71,10 +71,10 @@
       ],
       "sitios": [
         "src/PakuPort.Cli/Program.cs:1116",
-        "src/PakuPort.Cli/Program.cs:2844"
+        "src/PakuPort.Cli/Program.cs:2852"
       ],
       "doc": "PAKU_AUTOKEYS (verificacion): una tecla cada ~10 frames; el make se MANTIENE 5 frames antes del break (la clase de juegos que escanean que teclas estan pulsadas AHORA).",
-      "doc_de": "src/PakuPort.Cli/Program.cs:1323"
+      "doc_de": "src/PakuPort.Cli/Program.cs:1331"
     },
     {
       "nombre": "PAKU_CAPAS",
@@ -141,10 +141,10 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:2855"
+        "src/PakuPort.Cli/Program.cs:2863"
       ],
       "doc": "PAKU_CLICKS: clicks scriptados deterministas \"\"x,y,frame[,hold];...\"\" (coordenadas de JUEGO). En el frame indicado el cursor salta a (x,y) y pulsa botón izq `hold` frames (por defecto 6; hold=0 = mantener pulsado hasta el cierre, útil para dejar un menú desplegado en el screenshot). Mientras hay un click activo tiene prioridad sobre el wiggle y el ratón real.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2851"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2859"
     },
     {
       "nombre": "PAKU_COBERTURA",
@@ -155,10 +155,10 @@
         "motor"
       ],
       "sitios": [
-        "src/PakuPort.Core/Cobertura.cs:41"
+        "src/PakuPort.Core/Cobertura.cs:45"
       ],
       "doc": "PAKU_COBERTURA=<fichero>: marca el rango de cada instruccion que el interprete ejecuta y al terminar vuelca los TRAMOS de codigo pisados. Es la frontera de lo desconocido del expediente: lo que no aparece aqui no se ejecuto nunca, y sobre eso la IA no tiene datos. Solo mide el mundo de 16 bits; lo de fuera se cuenta y se declara.",
-      "doc_de": "src/PakuPort.Core/Cobertura.cs:35"
+      "doc_de": "src/PakuPort.Core/Cobertura.cs:39"
     },
     {
       "nombre": "PAKU_CORPUS",
@@ -380,10 +380,10 @@
       ],
       "sitios": [
         "src/PakuPort.Cli/Program.cs:1010",
-        "src/PakuPort.Cli/Program.cs:2641"
+        "src/PakuPort.Cli/Program.cs:2649"
       ],
       "doc": "PAKU_CYCLES: override en runtime del governor (0 = velocidad libre). El valor horneado viene de game.json (cyclesPerMs = instrucciones/ms, la unidad DOSBox cycles=N).",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2639"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2647"
     },
     {
       "nombre": "PAKU_DIAG_CB",
@@ -450,10 +450,10 @@
         "motor"
       ],
       "sitios": [
-        "src/PakuPort.Core/Interp.cs:2540"
+        "src/PakuPort.Core/Interp.cs:2542"
       ],
       "doc": "PAKU_DUMP32=<fichero>: vuelca la imagen del mundo plano tal como quedó. Es la única forma de comparar byte a byte lo que cargamos con lo que hay en el disco: un programa que comprueba su propia integridad dice que algo no cuadra, nunca DÓNDE.",
-      "doc_de": "src/PakuPort.Core/Interp.cs:2607"
+      "doc_de": "src/PakuPort.Core/Interp.cs:2609"
     },
     {
       "nombre": "PAKU_DUMP_DECOMP",
@@ -479,7 +479,7 @@
         "motor"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:5515"
+        "src/PakuPort.Cli/Program.cs:5528"
       ],
       "doc": null,
       "doc_de": null
@@ -521,8 +521,8 @@
         "motor"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:5511",
-        "src/PakuPort.Cli/Program.cs:5744"
+        "src/PakuPort.Cli/Program.cs:5524",
+        "src/PakuPort.Cli/Program.cs:5757"
       ],
       "doc": null,
       "doc_de": null
@@ -537,7 +537,7 @@
       ],
       "sitios": [
         "src/PakuPort.Cli/Program.cs:1045",
-        "src/PakuPort.Cli/Program.cs:2787"
+        "src/PakuPort.Cli/Program.cs:2795"
       ],
       "doc": "Escala ENTERA: la imagen se amplia un numero exacto de veces y se centra. Sin esto el factor sale fraccionario (320x240 a 1080p son x4,5) y con filtro de vecino mas proximo unas filas se duplican y otras no: se ve como si media pantalla estuviera a media resolucion, y el patron BAILA cuando el juego mueve la imagen. Ctrl+F12 conmuta.",
       "doc_de": "src/PakuPort.Cli/Program.cs:1041"
@@ -551,8 +551,8 @@
         "motor"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:5777",
-        "src/PakuPort.Cli/Program.cs:5797",
+        "src/PakuPort.Cli/Program.cs:5790",
+        "src/PakuPort.Cli/Program.cs:5810",
         "src/PakuPort.Core/Cpu.cs:843"
       ],
       "doc": null,
@@ -567,7 +567,7 @@
         "motor"
       ],
       "sitios": [
-        "src/PakuPort.Core/Interp.cs:1851"
+        "src/PakuPort.Core/Interp.cs:1853"
       ],
       "doc": "Con PAKU_FATAL_MEMDUMP=1 además se vuelca la imagen de memoria: un cuelgue no lanza excepción, así que este es el único momento en que se puede desensamblar el código VIVO del bucle (los segmentos de overlay se reutilizan).",
       "doc_de": "src/PakuPort.Core/Interp.cs:180"
@@ -581,11 +581,11 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:1484",
-        "src/PakuPort.Cli/Program.cs:3727"
+        "src/PakuPort.Cli/Program.cs:1492",
+        "src/PakuPort.Cli/Program.cs:3740"
       ],
       "doc": "PAKU_FB_PNG=<fichero>: volcado del framebuffer NATIVO (WxH de juego, sin escala ni aspecto) — la fuente pixel-exacta para jueces y catalogos (el screenshot de ventana sale reescalado y no sirve para recortar sprites 1:1).",
-      "doc_de": "src/PakuPort.Cli/Program.cs:3724"
+      "doc_de": "src/PakuPort.Cli/Program.cs:3737"
     },
     {
       "nombre": "PAKU_FILE_TRACE",
@@ -764,10 +764,10 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:2656"
+        "src/PakuPort.Cli/Program.cs:2664"
       ],
       "doc": "Intérprete de respaldo: al caer en un hueco del código lifteado se ejecutan los bytes ORIGINALES de la imagen en memoria. PAKU_INTERP=0 lo desactiva (comportamiento Fase 0: registrar el hueco y volver mudo).",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2653"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2661"
     },
     {
       "nombre": "PAKU_INTERP32_CACHE",
@@ -806,10 +806,10 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:2443"
+        "src/PakuPort.Cli/Program.cs:2451"
       ],
       "doc": "Entrada del hilo de lógica. PAKU_INTERP_ONLY=1 corre el juego 100% en el intérprete (semántica 8086, el lifteado ni se toca); default = llamada al entry lifteado.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2353"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2361"
     },
     {
       "nombre": "PAKU_INTERP_TRACE",
@@ -862,7 +862,7 @@
         "motor"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:5812"
+        "src/PakuPort.Cli/Program.cs:5825"
       ],
       "doc": null,
       "doc_de": null
@@ -918,10 +918,10 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:2445"
+        "src/PakuPort.Cli/Program.cs:2453"
       ],
       "doc": "Motor por defecto: interpOnly=true corre el juego 100% en el interprete (semantica 8086 real). PAKU_INTERP_ONLY=1 lo fuerza siempre; con interpDefault horneado, sin env vars = interprete y PAKU_LIFTED=1 vuelve al mundo lifteado de siempre. INTERP_DEFAULT se hornea desde game.json. Y si el remake trae el PROGRAMA entero traducido (FuncionesPortadas.RegistraPrograma), el motor es el interprete: es donde vive el gancho de las traducciones.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2438"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2446"
     },
     {
       "nombre": "PAKU_LIVE_VRAM",
@@ -932,10 +932,10 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:2862"
+        "src/PakuPort.Cli/Program.cs:2870"
       ],
       "doc": "PAKU_LIVE_VRAM=1 presenta siempre la VRAM viva en vez del front buffer capturado por reloj (diagnóstico / A/B del parpadeo). Por defecto se presenta el front buffer (modelo hardware).",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2860"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2868"
     },
     {
       "nombre": "PAKU_LOG_AUDIO_EV",
@@ -1078,10 +1078,10 @@
         "motor"
       ],
       "sitios": [
-        "src/PakuPort.Core/Interp.cs:1892"
+        "src/PakuPort.Core/Interp.cs:1894"
       ],
       "doc": "`PAKU_LOG_INTJUEGO=<n>[,<n>...]` (numeros en HEX) — QUIEN LLAMA AL DRIVER DEL JUEGO, con que registros y desde donde. Para que existe. En DOS, un juego habla con su driver por una interrupcion propia: un juego de prueba tiene su driver grafico en INT 91h con el numero de funcion en AX, otro tiene el p-code de Turbo Basic en INT ECh. Cuando ese driver rechaza una llamada, el mensaje dice el numero malo y la direccion de retorno, y con eso hay que encontrar al llamante — que no se puede buscar en el volcado de memoria: medido en un juego de prueba, en el MiB entero hay cuatro cd 91 y ninguno cae donde tendria que caer, porque la llamada la hace un envoltorio de libreria o un puntero calculado. Anota una linea por vectorizacion a logs/intjuego.log: el tick, el numero, de donde viene (CS:IP de la instruccion y direccion de retorno, que es la que imprimen los drivers), a donde va, los registros, el tope de la pila y el camino recorrido. Esas dos cosas no son un extra: un driver DOS recibe sus parametros por la pila (el envoltorio de C hace mov ax,[bp+6]), y el camino es lo que resolvio el caso del INT 91h, porque enseno que el programa no venia de la instruccion anterior sino atravesando los ceros del principio de otro segmento. Apagado no cuesta nada: una comparacion contra un array de 256 bools que se llena una vez.",
-      "doc_de": "src/PakuPort.Core/Interp.cs:1868"
+      "doc_de": "src/PakuPort.Core/Interp.cs:1870"
     },
     {
       "nombre": "PAKU_LOG_IRQ32",
@@ -1277,12 +1277,12 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:1470",
-        "src/PakuPort.Cli/Program.cs:3710",
+        "src/PakuPort.Cli/Program.cs:1478",
+        "src/PakuPort.Cli/Program.cs:3723",
         "src/PakuPort.Core/CorteDeterminista.cs:77"
       ],
       "doc": "PAKU_MEMDUMP=<fichero>: vuelca el MiB de memoria VIVA al terminar. Es la única forma de leer el código que un juego genera o descomprime en runtime (el de la imagen del EXE ya no es el que corre) y de ver dónde ha dejado sus vectores: así se localizó el driver de teclado de un juego de prueba, colgado de INT 15h y no del INT 9.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:3706"
+      "doc_de": "src/PakuPort.Cli/Program.cs:3719"
     },
     {
       "nombre": "PAKU_MEMDUMP_ALTO",
@@ -1293,11 +1293,11 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:1477",
-        "src/PakuPort.Cli/Program.cs:3717"
+        "src/PakuPort.Cli/Program.cs:1485",
+        "src/PakuPort.Cli/Program.cs:3730"
       ],
       "doc": "PAKU_MEMDUMP_ALTO=<fichero>: la memoria PLANA (por encima de 1 MiB). En un juego de 32 bits todo lo que importa vive ahi —lo que descomprime al cargar un mapa, sus tablas—, y PAKU_MEMDUMP solo ve el MiB de abajo: buscar ahi y no encontrar nada se lee como «no esta» cuando lo que pasa es que no se ha mirado donde es.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:1473"
+      "doc_de": "src/PakuPort.Cli/Program.cs:1481"
     },
     {
       "nombre": "PAKU_MEMWATCH",
@@ -1350,10 +1350,10 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:2800"
+        "src/PakuPort.Cli/Program.cs:2808"
       ],
       "doc": "Movimiento crudo del ratón con la captura activa: referencia del frame anterior y acumulador de las fracciones de píxel de juego. PAKU_MOUSE_ABS=1 vuelve al modelo previo (mickeys derivados de la posición ya recortada), por si algún juego prefiriera el anterior.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2795"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2803"
     },
     {
       "nombre": "PAKU_MOUSE_WIGGLE",
@@ -1364,10 +1364,10 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:2847"
+        "src/PakuPort.Cli/Program.cs:2855"
       ],
       "doc": "PAKU_MOUSE_WIGGLE=1: movimiento sintético en coordenadas de juego (prueba headless del camino de eventos INT 33h sin ratón físico); =2: además clicks.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:3245"
+      "doc_de": "src/PakuPort.Cli/Program.cs:3255"
     },
     {
       "nombre": "PAKU_NOAUDIO",
@@ -1380,11 +1380,11 @@
       ],
       "sitios": [
         "src/PakuPort.Cli/Program.cs:1052",
-        "src/PakuPort.Cli/Program.cs:2731",
+        "src/PakuPort.Cli/Program.cs:2739",
         "src/PakuPort.Core/Platform/Machine/Mpu401.cs:172"
       ],
       "doc": "SIN dispositivo de audio (PAKU_NOAUDIO) se escribe SOLO lo que el anillo tenia, sin rellenar con silencio hasta completar el bufer. La rama de arriba SI rellena, y debe: alli hay un dispositivo esperando un bloque entero cada vez. Aqui no hay nadie a quien alimentar, y rellenar convertia el WAV en un reloj de FOTOGRAMAS en vez de un reloj de AUDIO: la duracion del volcado salia proporcional a los fps del juego. Medido — un juego a ~59 fps daba 247 s de WAV para 45 s de partida (2665 bufers de 2048 = 122.880 muestras/s) mientras otro, a ~11 fps, daba 45,0 s clavados y parecia que el que estaba roto era el primero. El 84,9 % de silencio de aquel volcado era este relleno, no el juego.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:1424"
+      "doc_de": "src/PakuPort.Cli/Program.cs:1432"
     },
     {
       "nombre": "PAKU_NOSPLASH",
@@ -1396,10 +1396,10 @@
       ],
       "sitios": [
         "src/PakuPort.Cli/Program.cs:1106",
-        "src/PakuPort.Cli/Program.cs:2835"
+        "src/PakuPort.Cli/Program.cs:2843"
       ],
       "doc": "Verificación automatizada (CI/diagnóstico, genérico): PAKU_NOSPLASH=1     salta el splash (la lógica arranca ya) PAKU_AUTOEXIT_MS=N  cierra tras N ms reportando estado + screenshot.png",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2832"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2840"
     },
     {
       "nombre": "PAKU_NO_ASPECT",
@@ -1412,11 +1412,11 @@
       "sitios": [
         "src/PakuPort.Cli/Program.cs:1024",
         "src/PakuPort.Cli/Program.cs:1040",
-        "src/PakuPort.Cli/Program.cs:2694",
-        "src/PakuPort.Cli/Program.cs:2782"
+        "src/PakuPort.Cli/Program.cs:2702",
+        "src/PakuPort.Cli/Program.cs:2790"
       ],
       "doc": "Escala y letterbox por frame: cubre cambio de modo de vídeo, F11 y redimensionado. Corrección de aspecto (DOSBox `aspect=true`): un CRT de la época mostraba TODOS estos modos a 4:3 con píxeles NO cuadrados, así que 320x200 y 640x200 hay que estirarlos en vertical (los círculos salen ovalados si no). Ctrl+F11 conmuta; PAKU_NO_ASPECT=1 la apaga. A 4:3 CRT shows EVERY mode at 4:3: displayed ratio w/(h*pixelAspect) == 4/3, so pixelAspect = 0.75*(w/h): 1.2 for 320x200 (DOSBox aspect=true), 0.6 for 320x400 double-scan, 1.35 for 720x400 text. The old reciprocal (4/3)/(w/h) squashed 320x200 to 1.92:1 (mild, went unnoticed) and blew 320x400 up to 0.48:1 (measured on a test game).",
-      "doc_de": "src/PakuPort.Cli/Program.cs:3411"
+      "doc_de": "src/PakuPort.Cli/Program.cs:3421"
     },
     {
       "nombre": "PAKU_NO_DPMI",
@@ -1427,10 +1427,10 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:2569"
+        "src/PakuPort.Cli/Program.cs:2577"
       ],
       "doc": "con EXTENSOR EMBEBIDO, que arrancan en modo real y preguntan por un host antes de intentar el cambio de modo por su cuenta. VA ANTES DE AttachMemory A PROPOSITO: es alli donde nace el host DPMI y se registra su INT 31h. PAKU_NO_DPMI=1 lo apaga para un A/B.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2566"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2574"
     },
     {
       "nombre": "PAKU_NO_GAMEPORT",
@@ -1443,11 +1443,11 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:2627",
+        "src/PakuPort.Cli/Program.cs:2635",
         "src/PakuPort.Core/Platform/Machine/GamePort.cs:44"
       ],
       "doc": "del usuario sin joystick físico). PAKU_NO_GAMEPORT=0 fuerza el puerto presente para A/B.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2626"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2634"
     },
     {
       "nombre": "PAKU_NO_MOUSE_CAPTURE",
@@ -1458,10 +1458,10 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:2793"
+        "src/PakuPort.Cli/Program.cs:2801"
       ],
       "doc": "Captura de ratón estilo DOSBox: click dentro captura (cursor confinado a la imagen, el del JUEGO es el único visible, 1:1 con DOS), Ctrl+F10 libera, F11 = pantalla completa sin bordes. PAKU_NO_MOUSE_CAPTURE=1 la desactiva; una corrida sin ventana nunca captura.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2789"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2797"
     },
     {
       "nombre": "PAKU_NO_TYPEMATIC",
@@ -1473,10 +1473,10 @@
       ],
       "sitios": [
         "src/PakuPort.Cli/Program.cs:1115",
-        "src/PakuPort.Cli/Program.cs:2871"
+        "src/PakuPort.Cli/Program.cs:2879"
       ],
       "doc": "PAKU_NO_TYPEMATIC=1: escotilla por si algún juego se atraganta con las repeticiones.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2870"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2878"
     },
     {
       "nombre": "PAKU_NREDIR",
@@ -1715,10 +1715,10 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:2893"
+        "src/PakuPort.Cli/Program.cs:2901"
       ],
       "doc": "PAKU_REMAKE_NO_AGUJEREAR=1: la textura HD tapa TODO, como antes del arreglo que destapo una prueba manual. Es el CONTROL NEGATIVO del juez de pantalla presentada (judge_presentado.py): sin una forma de reproducir el fallo a voluntad, un juez que sale verde no ha demostrado que sepa ponerse rojo. No se usa para jugar: congela la imagen.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2889"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2897"
     },
     {
       "nombre": "PAKU_SAMPLE_PC",
@@ -1743,10 +1743,10 @@
         "motor"
       ],
       "sitios": [
-        "src/PakuPort.Core/Interp.cs:2559"
+        "src/PakuPort.Core/Interp.cs:2561"
       ],
       "doc": "PAKU_SAMPLE_PC32=1: histograma del EIP del mundo plano. Es LA herramienta para un juego que corre y no avanza: dice en qué bucle está metido, que es lo único que un log de servicios no puede contar. El tamaño del trozo se hace IRREGULAR mientras muestrea para que el corte no caiga siempre en el mismo punto de un bucle de periodo divisor.",
-      "doc_de": "src/PakuPort.Core/Interp.cs:2555"
+      "doc_de": "src/PakuPort.Core/Interp.cs:2557"
     },
     {
       "nombre": "PAKU_SAMPLE_PC_MS",
@@ -1827,10 +1827,10 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:2875"
+        "src/PakuPort.Cli/Program.cs:2883"
       ],
       "doc": "PAKU_SCREENSHOT_CADA=<s>: captura de la pantalla COMPUESTA (juego + capas HD del remake) cada s segundos, a logs/pantalla-<n>.png. Es la única forma headless de VER lo que el jugador vería: PAKU_FB_PNG vuelca el frame nativo del juego, sin la composición.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:3608"
+      "doc_de": "src/PakuPort.Cli/Program.cs:3618"
     },
     {
       "nombre": "PAKU_SIN_ATAJO_DOS",
@@ -1841,10 +1841,10 @@
         "motor"
       ],
       "sitios": [
-        "src/PakuPort.Core/Interp.cs:3547"
+        "src/PakuPort.Core/Interp.cs:3549"
       ],
       "doc": "PAKU_SIN_ATAJO_DOS=1: devuelve el `int 21h AH=2Ch` del mundo mixto al kernel del extensor, que es como estaba antes. Es el CONTROL del A/B — ver el atajo en .",
-      "doc_de": "src/PakuPort.Core/Interp.cs:3543"
+      "doc_de": "src/PakuPort.Core/Interp.cs:3545"
     },
     {
       "nombre": "PAKU_SIN_FRENO",
@@ -1955,11 +1955,11 @@
       ],
       "sitios": [
         "src/PakuPort.Cli/Program.cs:1221",
-        "src/PakuPort.Cli/Program.cs:3353",
-        "src/PakuPort.Cli/Program.cs:3360"
+        "src/PakuPort.Cli/Program.cs:3363",
+        "src/PakuPort.Cli/Program.cs:3370"
       ],
       "doc": "La pila C# ES la cadena de llamadas del juego (Fn_xxxxx) — con ella un opcode-no-soportado se diagnostica sin arqueología.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:3351"
+      "doc_de": "src/PakuPort.Cli/Program.cs:3361"
     },
     {
       "nombre": "PAKU_TRAZA_EIP_VRAM",
@@ -2055,7 +2055,7 @@
       ],
       "sitios": [
         "src/PakuPort.Cli/Program.cs:1072",
-        "src/PakuPort.Cli/Program.cs:2750"
+        "src/PakuPort.Cli/Program.cs:2758"
       ],
       "doc": "PAKU_WAV_DUMP=<ruta>: vuelca el PCM drenado a un WAV mono 16-bit 22050. Es la unica forma OBJETIVA de decir si suena algo y qué (el oido no vale de juez); sin dispositivo de audio se crea el anillo igual para que el volcado funcione headless.",
       "doc_de": "src/PakuPort.Cli/Program.cs:1069"
@@ -2070,10 +2070,10 @@
       ],
       "sitios": [
         "src/PakuPort.Cli/Program.cs:1033",
-        "src/PakuPort.Cli/Program.cs:2712"
+        "src/PakuPort.Cli/Program.cs:2720"
       ],
       "doc": "Pantalla completa (ventana sin bordes) DE SERIE: el juego se escala y centra solo — viewScale se recalcula cada frame contra el tamaño real de la ventana —, así que no hay nada que recolocar al arrancar. F11 vuelve a ventana; PAKU_WINDOWED=1 arranca en ventana. El tamaño calculado arriba sigue siendo el que queda al salir del borderless. Excepción headless (CorteDeterminista.SinVentana): la ventana está oculta a propósito y cambiarle el estado hace que GLFW la muestre y robe el foco al usuario en mitad de un smoke.",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2706"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2714"
     },
     {
       "nombre": "PAKU_XBRZ",
@@ -2084,10 +2084,10 @@
         "plantilla"
       ],
       "sitios": [
-        "src/PakuPort.Cli/Program.cs:2880"
+        "src/PakuPort.Cli/Program.cs:2888"
       ],
       "doc": "PAKU_XBRZ=<2..6>: escalado xBRZ del frame del juego (sustituye a Scale3x si está puesto).",
-      "doc_de": "src/PakuPort.Cli/Program.cs:2879"
+      "doc_de": "src/PakuPort.Cli/Program.cs:2887"
     }
   ]
 }

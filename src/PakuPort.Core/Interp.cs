@@ -615,7 +615,9 @@ public static class Interp
             // porque hace falta insn.Length — marcando solo el primer byte, los de en medio de cada
             // instruccion saldrian como "nunca ejecutados" y la frontera vendria llena de agujeros
             // que no existen. Apagado es una lectura de un estatico y un salto.
-            if (Cobertura.Activo) Cobertura.Marca(linInsn, insn.Length);
+            if (Cobertura.Activo)
+                Cobertura.Marca(linInsn, insn.Length, insn.FlowControl == FlowControl.ConditionalBranch
+                    ? Memory.LinDeSegmento(c.CS, insn.NearBranch16) : Cobertura.SinSalto);
             if (Trace) Console.Error.WriteLine($"[INTERP] t={Cpu.TickCount} {c.CS:X4}:{ip:X4} {insn} AX={c.AX:X4} BX={c.BX:X4} CX={c.CX:X4} DX={c.DX:X4} SP={c.SP:X4} DS={c.DS:X4} ES={c.ES:X4} SS={c.SS:X4} F={c.FlagsWord():X4}");
 
             espAntesPf16 = c.ESP; espAntesValido = true;

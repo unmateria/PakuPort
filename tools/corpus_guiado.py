@@ -6,7 +6,9 @@ que acierta, el fin de partida o el record no entraban nunca. Traducir esos cami
 traducir sin red.
 
   1. PRIMERA PASADA: `PAKU_COBERTURA` apunta, en `<csv>.novedades`, la instruccion en que cada
-     direccion de codigo se ejecuto POR PRIMERA VEZ.
+     direccion de codigo se ejecuto POR PRIMERA VEZ, y en la que cada salto condicional cayo por
+     primera vez por cada uno de sus dos lados (sin eso, las SALIDAS de los bucles se quedaban sin
+     casos: salir casi nunca ejecuta una direccion nueva).
   2. SEGUNDA PASADA, con la misma cinta y el mismo binario: `PAKU_CORPUS` graba la cuota normal y
      ADEMAS, con `PAKU_CORPUS_NOVEDADES`, las invocaciones que contienen uno de esos instantes. En
      la misma corrida van las otras capturas del expediente (capas, cobertura y muestreo del PC):

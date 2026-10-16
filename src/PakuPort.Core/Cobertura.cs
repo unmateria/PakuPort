@@ -31,6 +31,10 @@ public static class Cobertura
     static string _ruta = "";
     static long _instrucciones, _fueraDelMega;
     static bool _enganchado;
+    static uint _prevLineal, _prevFin, _prevDestino = SinSalto;
+    static long _prevInsn;
+    /// <summary>Lados de salto condicional ya vistos: (lineal del salto &lt;&lt; 1) | tomado.</summary>
+    static readonly HashSet<ulong> _lados = [];
 
     /// <summary>PAKU_COBERTURA=&lt;fichero&gt;: marca el rango de cada instruccion que el
     /// interprete ejecuta y al terminar vuelca los TRAMOS de codigo pisados. Es la frontera de lo
@@ -43,6 +47,8 @@ public static class Cobertura
         _ruta = ruta;
         _mapa = new byte[1 << 20];
         _instrucciones = _fueraDelMega = 0;
+        _prevDestino = SinSalto;
+        _lados.Clear();
         Activo = true;
         if (!_enganchado)
         {
@@ -52,12 +58,31 @@ public static class Cobertura
         return $"[COBERTURA] marcando el codigo ejecutado (mundo de 16 bits) -> {_ruta}";
     }
 
-    /// <summary>Marca los <paramref name="largo"/> bytes que ocupa la instrucción.</summary>
-    public static void Marca(uint lineal, int largo)
+    /// <summary>Valor de <c>destinoCond</c> para una instrucción que no es un salto condicional.</summary>
+    public const uint SinSalto = uint.MaxValue;
+
+    /// <summary>Marca los <paramref name="largo"/> bytes que ocupa la instrucción.
+    /// <paramref name="destinoCond"/> es la lineal a la que salta si es un salto condicional
+    /// (<c>jcc</c>, <c>loop</c>, <c>jcxz</c>), o <see cref="SinSalto"/>.</summary>
+    public static void Marca(uint lineal, int largo, uint destinoCond)
     {
         _instrucciones++;
         var mapa = _mapa;
         if (mapa == null) return;
+        // NOVEDAD POR SALTO. Una direccion nueva no basta: la SALIDA de un bucle casi nunca
+        // ejecuta nada que no se hubiera ejecutado antes (cae en codigo ya visto), asi que con la
+        // novedad por direccion las salidas se quedaban sin casos — medido en un juego de prueba,
+        // cero en tres bucles. Lo nuevo ahi es el LADO del salto: la primera vez que un salto
+        // condicional cae por cada uno de sus dos lados. Se apunta con el instante DEL SALTO y no
+        // del destino: la vuelta que sale se cierra al llegar al destino, antes de que el contador
+        // avance, y un instante posterior al cierre no lo cubre ningun caso.
+        // Solo cuenta si se llego al destino por el salto (cayo detras o fue a su objetivo): una
+        // IRQ que entra justo despues no es un lado del salto.
+        if (_prevDestino != SinSalto && (lineal == _prevFin || lineal == _prevDestino)
+            && _lados.Add(((ulong)_prevLineal << 1) | (lineal == _prevFin ? 0UL : 1UL)))
+            _novedades.Add((_prevInsn, lineal));
+        _prevLineal = lineal; _prevFin = lineal + (uint)largo; _prevDestino = destinoCond;
+        _prevInsn = Interp.InsnCount;
         if (lineal >= (uint)mapa.Length) { _fueraDelMega++; return; }
         // LA PRIMERA VEZ que se ejecuta una instruccion se apunta con su instante (el contador de
         // instrucciones del interprete). Es la primera pasada del corpus guiado por cobertura: la
@@ -82,7 +107,8 @@ public static class Cobertura
         try
         {
             using var wn = new StreamWriter(_ruta + ".novedades");
-            wn.WriteLine("# instruccion en que se ejecuto POR PRIMERA VEZ cada direccion (insn lineal)");
+            wn.WriteLine("# instruccion en que se ejecuto POR PRIMERA VEZ cada direccion, o en que un salto");
+            wn.WriteLine("# condicional cayo POR PRIMERA VEZ por uno de sus dos lados (insn lineal-del-destino)");
             foreach (var (insn, lin) in _novedades) wn.WriteLine($"{insn} {lin:X5}");
         }
         catch (IOException) { }

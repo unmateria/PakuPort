@@ -477,6 +477,24 @@ public static class CorpusRecorder
         }
     }
 
+    /// <summary>Los bytes del DGROUP en que <paramref name="foto"/> y la memoria de ahora difieren,
+    /// con su valor de ahora. Salta los tramos iguales con <c>CommonPrefixLength</c> (vectorizado):
+    /// casi ninguna INT escribe en el DGROUP, y comparar los 64 KB byte a byte en cada una era el
+    /// 80 % del tiempo de grabar un juego que espera al reloj con `int 1Ah` en bucle.</summary>
+    static void AnotaDiferencias(byte[] foto, byte[] raw, uint dsBase, SortedDictionary<int, byte> ws)
+    {
+        ReadOnlySpan<byte> antes = foto.AsSpan(0, DgroupLen);
+        ReadOnlySpan<byte> ahora = raw.AsSpan((int)dsBase, DgroupLen);
+        int k = 0;
+        while (true)
+        {
+            k += antes[k..].CommonPrefixLength(ahora[k..]);
+            if (k >= DgroupLen) return;
+            ws[(int)dsBase + k] = ahora[k];
+            k++;
+        }
+    }
+
     /// <summary>Fotos del DGROUP tomadas justo antes de la INT en curso, por dirección base.</summary>
     static readonly Dictionary<uint, byte[]> _fotos = [];
     /// <summary>Buffers de foto reutilizados: una INT por instrucción no puede pedir 64 KB al
@@ -526,9 +544,7 @@ public static class CorpusRecorder
         // devolver los buffers, y sólo si la INT cuenta.
         foreach (var (dsBase, foto) in _fotos)
         {
-            if (valida && ws != null)
-                for (int k = 0; k < DgroupLen; k++)
-                    if (foto[k] != m.Raw[dsBase + k]) ws[(int)dsBase + k] = m.Raw[dsBase + k];
+            if (valida && ws != null) AnotaDiferencias(foto, m.Raw, dsBase, ws);
             _libres.Push(foto);
         }
         _fotos.Clear();
@@ -631,9 +647,7 @@ public static class CorpusRecorder
         var ws = _wsIrq; _wsIrq = null;
         foreach (var (dsBase, foto) in _fotosIrq)
         {
-            if (ws != null)
-                for (int k = 0; k < DgroupLen; k++)
-                    if (foto[k] != m.Raw[dsBase + k]) ws[(int)dsBase + k] = m.Raw[dsBase + k];
+            if (ws != null) AnotaDiferencias(foto, m.Raw, dsBase, ws);
             _libres.Push(foto);
         }
         _fotosIrq.Clear();

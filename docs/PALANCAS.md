@@ -178,7 +178,7 @@ EL CONTROL NEGATIVO de la parada, y por eso es una palanca y no un experimento s
 
 Verificación automatizada (CI/diagnóstico, genérico): PAKU_NOSPLASH=1     salta el splash (la lógica arranca ya) PAKU_AUTOEXIT_MS=N  cierra tras N ms reportando estado + screenshot.png
 
-Usada en: `src/PakuPort.Cli/Program.cs:1107`, `src/PakuPort.Cli/Program.cs:2836`, `src/PakuPort.Core/CorteDeterminista.cs:35`
+Usada en: `src/PakuPort.Cli/Program.cs:1107`, `src/PakuPort.Cli/Program.cs:2844`, `src/PakuPort.Core/CorteDeterminista.cs:35`
 
 #### `PAKU_DUMP_SRC`  ·  presencia o valor
 
@@ -196,13 +196,13 @@ TAREA A — Unpack dinámico como PASO ADICIONAL. Su salida SUSTITUYE al memimag
 
 **SIN DOCUMENTAR** — no hay comentario que la explique.
 
-Usada en: `src/PakuPort.Cli/Program.cs:5511`, `src/PakuPort.Cli/Program.cs:5744`
+Usada en: `src/PakuPort.Cli/Program.cs:5524`, `src/PakuPort.Cli/Program.cs:5757`
 
 #### `PAKU_EXIT_STACK`  ·  =1
 
 **SIN DOCUMENTAR** — no hay comentario que la explique.
 
-Usada en: `src/PakuPort.Cli/Program.cs:5777`, `src/PakuPort.Cli/Program.cs:5797`, `src/PakuPort.Core/Cpu.cs:843`
+Usada en: `src/PakuPort.Cli/Program.cs:5790`, `src/PakuPort.Cli/Program.cs:5810`, `src/PakuPort.Core/Cpu.cs:843`
 
 #### `PAKU_IPLOG_DUMP`  ·  presencia o valor
 
@@ -212,19 +212,19 @@ Usada en: `src/PakuPort.Cli/Program.cs:5777`, `src/PakuPort.Cli/Program.cs:5797`
 
 PAKU_MEMDUMP=<fichero>: vuelca el MiB de memoria VIVA al terminar. Es la única forma de leer el código que un juego genera o descomprime en runtime (el de la imagen del EXE ya no es el que corre) y de ver dónde ha dejado sus vectores: así se localizó el driver de teclado de un juego de prueba, colgado de INT 15h y no del INT 9.
 
-Usada en: `src/PakuPort.Cli/Program.cs:1470`, `src/PakuPort.Cli/Program.cs:3710`, `src/PakuPort.Core/CorteDeterminista.cs:77`
+Usada en: `src/PakuPort.Cli/Program.cs:1478`, `src/PakuPort.Cli/Program.cs:3723`, `src/PakuPort.Core/CorteDeterminista.cs:77`
 
 #### `PAKU_NOAUDIO`  ·  =1
 
 SIN dispositivo de audio (PAKU_NOAUDIO) se escribe SOLO lo que el anillo tenia, sin rellenar con silencio hasta completar el bufer. La rama de arriba SI rellena, y debe: alli hay un dispositivo esperando un bloque entero cada vez. Aqui no hay nadie a quien alimentar, y rellenar convertia el WAV en un reloj de FOTOGRAMAS en vez de un reloj de AUDIO: la duracion del volcado salia proporcional a los fps del juego. Medido — un juego a ~59 fps daba 247 s de WAV para 45 s de partida (2665 bufers de 2048 = 122.880 muestras/s) mientras otro, a ~11 fps, daba 45,0 s clavados y parecia que el que estaba roto era el primero. El 84,9 % de silencio de aquel volcado era este relleno, no el juego.
 
-Usada en: `src/PakuPort.Cli/Program.cs:1052`, `src/PakuPort.Cli/Program.cs:2731`, `src/PakuPort.Core/Platform/Machine/Mpu401.cs:172`
+Usada en: `src/PakuPort.Cli/Program.cs:1052`, `src/PakuPort.Cli/Program.cs:2739`, `src/PakuPort.Core/Platform/Machine/Mpu401.cs:172`
 
 #### `PAKU_NO_GAMEPORT`  ·  =1 / presencia o valor
 
 del usuario sin joystick físico). PAKU_NO_GAMEPORT=0 fuerza el puerto presente para A/B.
 
-Usada en: `src/PakuPort.Cli/Program.cs:2627`, `src/PakuPort.Core/Platform/Machine/GamePort.cs:44`
+Usada en: `src/PakuPort.Cli/Program.cs:2635`, `src/PakuPort.Core/Platform/Machine/GamePort.cs:44`
 
 ### `src/PakuPort.Core/AudioEventLog.cs`
 
@@ -764,13 +764,13 @@ Guest-time windows in ms; converted to ticks with the governor's CyclesPerMs (20
 
 Verificación automatizada (CI/diagnóstico, genérico): PAKU_NOSPLASH=1     salta el splash (la lógica arranca ya) PAKU_AUTOEXIT_MS=N  cierra tras N ms reportando estado + screenshot.png
 
-Usada en: `src/PakuPort.Cli/Program.cs:1107`, `src/PakuPort.Cli/Program.cs:2836`, `src/PakuPort.Core/CorteDeterminista.cs:35`
+Usada en: `src/PakuPort.Cli/Program.cs:1107`, `src/PakuPort.Cli/Program.cs:2844`, `src/PakuPort.Core/CorteDeterminista.cs:35`
 
 #### `PAKU_AUTOKEYS`  ·  valor de texto
 
 PAKU_AUTOKEYS (verificacion): una tecla cada ~10 frames; el make se MANTIENE 5 frames antes del break (la clase de juegos que escanean que teclas estan pulsadas AHORA).
 
-Usada en: `src/PakuPort.Cli/Program.cs:1116`, `src/PakuPort.Cli/Program.cs:2844`
+Usada en: `src/PakuPort.Cli/Program.cs:1116`, `src/PakuPort.Cli/Program.cs:2852`
 
 #### `PAKU_CLICKS`  ·  valor de texto
 
@@ -780,19 +780,19 @@ PAKU_CLICKS: clicks scriptados deterministas ""x,y,frame[,hold];..."" (coordenad
 
 PAKU_CYCLES: override en runtime del governor (0 = velocidad libre). El valor horneado viene de game.json (cyclesPerMs = instrucciones/ms, la unidad DOSBox cycles=N).
 
-Usada en: `src/PakuPort.Cli/Program.cs:1010`, `src/PakuPort.Cli/Program.cs:2641`
+Usada en: `src/PakuPort.Cli/Program.cs:1010`, `src/PakuPort.Cli/Program.cs:2649`
 
 #### `PAKU_ESCALA_ENTERA`  ·  =1
 
 Escala ENTERA: la imagen se amplia un numero exacto de veces y se centra. Sin esto el factor sale fraccionario (320x240 a 1080p son x4,5) y con filtro de vecino mas proximo unas filas se duplican y otras no: se ve como si media pantalla estuviera a media resolucion, y el patron BAILA cuando el juego mueve la imagen. Ctrl+F12 conmuta.
 
-Usada en: `src/PakuPort.Cli/Program.cs:1045`, `src/PakuPort.Cli/Program.cs:2787`
+Usada en: `src/PakuPort.Cli/Program.cs:1045`, `src/PakuPort.Cli/Program.cs:2795`
 
 #### `PAKU_FB_PNG`  ·  valor de texto
 
 PAKU_FB_PNG=<fichero>: volcado del framebuffer NATIVO (WxH de juego, sin escala ni aspecto) — la fuente pixel-exacta para jueces y catalogos (el screenshot de ventana sale reescalado y no sirve para recortar sprites 1:1).
 
-Usada en: `src/PakuPort.Cli/Program.cs:1484`, `src/PakuPort.Cli/Program.cs:3727`
+Usada en: `src/PakuPort.Cli/Program.cs:1492`, `src/PakuPort.Cli/Program.cs:3740`
 
 #### `PAKU_INTERP`  ·  presencia o valor
 
@@ -814,13 +814,13 @@ PAKU_LIVE_VRAM=1 presenta siempre la VRAM viva en vez del front buffer capturado
 
 PAKU_MEMDUMP=<fichero>: vuelca el MiB de memoria VIVA al terminar. Es la única forma de leer el código que un juego genera o descomprime en runtime (el de la imagen del EXE ya no es el que corre) y de ver dónde ha dejado sus vectores: así se localizó el driver de teclado de un juego de prueba, colgado de INT 15h y no del INT 9.
 
-Usada en: `src/PakuPort.Cli/Program.cs:1470`, `src/PakuPort.Cli/Program.cs:3710`, `src/PakuPort.Core/CorteDeterminista.cs:77`
+Usada en: `src/PakuPort.Cli/Program.cs:1478`, `src/PakuPort.Cli/Program.cs:3723`, `src/PakuPort.Core/CorteDeterminista.cs:77`
 
 #### `PAKU_MEMDUMP_ALTO`  ·  valor de texto
 
 PAKU_MEMDUMP_ALTO=<fichero>: la memoria PLANA (por encima de 1 MiB). En un juego de 32 bits todo lo que importa vive ahi —lo que descomprime al cargar un mapa, sus tablas—, y PAKU_MEMDUMP solo ve el MiB de abajo: buscar ahi y no encontrar nada se lee como «no esta» cuando lo que pasa es que no se ha mirado donde es.
 
-Usada en: `src/PakuPort.Cli/Program.cs:1477`, `src/PakuPort.Cli/Program.cs:3717`
+Usada en: `src/PakuPort.Cli/Program.cs:1485`, `src/PakuPort.Cli/Program.cs:3730`
 
 #### `PAKU_MOUSE_ABS`  ·  presencia o valor
 
@@ -834,19 +834,19 @@ PAKU_MOUSE_WIGGLE=1: movimiento sintético en coordenadas de juego (prueba headl
 
 SIN dispositivo de audio (PAKU_NOAUDIO) se escribe SOLO lo que el anillo tenia, sin rellenar con silencio hasta completar el bufer. La rama de arriba SI rellena, y debe: alli hay un dispositivo esperando un bloque entero cada vez. Aqui no hay nadie a quien alimentar, y rellenar convertia el WAV en un reloj de FOTOGRAMAS en vez de un reloj de AUDIO: la duracion del volcado salia proporcional a los fps del juego. Medido — un juego a ~59 fps daba 247 s de WAV para 45 s de partida (2665 bufers de 2048 = 122.880 muestras/s) mientras otro, a ~11 fps, daba 45,0 s clavados y parecia que el que estaba roto era el primero. El 84,9 % de silencio de aquel volcado era este relleno, no el juego.
 
-Usada en: `src/PakuPort.Cli/Program.cs:1052`, `src/PakuPort.Cli/Program.cs:2731`, `src/PakuPort.Core/Platform/Machine/Mpu401.cs:172`
+Usada en: `src/PakuPort.Cli/Program.cs:1052`, `src/PakuPort.Cli/Program.cs:2739`, `src/PakuPort.Core/Platform/Machine/Mpu401.cs:172`
 
 #### `PAKU_NOSPLASH`  ·  =1
 
 Verificación automatizada (CI/diagnóstico, genérico): PAKU_NOSPLASH=1     salta el splash (la lógica arranca ya) PAKU_AUTOEXIT_MS=N  cierra tras N ms reportando estado + screenshot.png
 
-Usada en: `src/PakuPort.Cli/Program.cs:1106`, `src/PakuPort.Cli/Program.cs:2835`
+Usada en: `src/PakuPort.Cli/Program.cs:1106`, `src/PakuPort.Cli/Program.cs:2843`
 
 #### `PAKU_NO_ASPECT`  ·  presencia o valor
 
 Escala y letterbox por frame: cubre cambio de modo de vídeo, F11 y redimensionado. Corrección de aspecto (DOSBox `aspect=true`): un CRT de la época mostraba TODOS estos modos a 4:3 con píxeles NO cuadrados, así que 320x200 y 640x200 hay que estirarlos en vertical (los círculos salen ovalados si no). Ctrl+F11 conmuta; PAKU_NO_ASPECT=1 la apaga. A 4:3 CRT shows EVERY mode at 4:3: displayed ratio w/(h*pixelAspect) == 4/3, so pixelAspect = 0.75*(w/h): 1.2 for 320x200 (DOSBox aspect=true), 0.6 for 320x400 double-scan, 1.35 for 720x400 text. The old reciprocal (4/3)/(w/h) squashed 320x200 to 1.92:1 (mild, went unnoticed) and blew 320x400 up to 0.48:1 (measured on a test game).
 
-Usada en: `src/PakuPort.Cli/Program.cs:1024`, `src/PakuPort.Cli/Program.cs:1040`, `src/PakuPort.Cli/Program.cs:2694`, `src/PakuPort.Cli/Program.cs:2782`
+Usada en: `src/PakuPort.Cli/Program.cs:1024`, `src/PakuPort.Cli/Program.cs:1040`, `src/PakuPort.Cli/Program.cs:2702`, `src/PakuPort.Cli/Program.cs:2790`
 
 #### `PAKU_NO_DPMI`  ·  presencia o valor
 
@@ -856,7 +856,7 @@ con EXTENSOR EMBEBIDO, que arrancan en modo real y preguntan por un host antes d
 
 del usuario sin joystick físico). PAKU_NO_GAMEPORT=0 fuerza el puerto presente para A/B.
 
-Usada en: `src/PakuPort.Cli/Program.cs:2627`, `src/PakuPort.Core/Platform/Machine/GamePort.cs:44`
+Usada en: `src/PakuPort.Cli/Program.cs:2635`, `src/PakuPort.Core/Platform/Machine/GamePort.cs:44`
 
 #### `PAKU_NO_MOUSE_CAPTURE`  ·  =1
 
@@ -866,7 +866,7 @@ Captura de ratón estilo DOSBox: click dentro captura (cursor confinado a la ima
 
 PAKU_NO_TYPEMATIC=1: escotilla por si algún juego se atraganta con las repeticiones.
 
-Usada en: `src/PakuPort.Cli/Program.cs:1115`, `src/PakuPort.Cli/Program.cs:2871`
+Usada en: `src/PakuPort.Cli/Program.cs:1115`, `src/PakuPort.Cli/Program.cs:2879`
 
 #### `PAKU_REMAKE_NO_AGUJEREAR`  ·  =1
 
@@ -880,19 +880,19 @@ PAKU_SCREENSHOT_CADA=<s>: captura de la pantalla COMPUESTA (juego + capas HD del
 
 La pila C# ES la cadena de llamadas del juego (Fn_xxxxx) — con ella un opcode-no-soportado se diagnostica sin arqueología.
 
-Usada en: `src/PakuPort.Cli/Program.cs:1221`, `src/PakuPort.Cli/Program.cs:3353`, `src/PakuPort.Cli/Program.cs:3360`
+Usada en: `src/PakuPort.Cli/Program.cs:1221`, `src/PakuPort.Cli/Program.cs:3363`, `src/PakuPort.Cli/Program.cs:3370`
 
 #### `PAKU_WAV_DUMP`  ·  valor de texto
 
 PAKU_WAV_DUMP=<ruta>: vuelca el PCM drenado a un WAV mono 16-bit 22050. Es la unica forma OBJETIVA de decir si suena algo y qué (el oido no vale de juez); sin dispositivo de audio se crea el anillo igual para que el volcado funcione headless.
 
-Usada en: `src/PakuPort.Cli/Program.cs:1072`, `src/PakuPort.Cli/Program.cs:2750`
+Usada en: `src/PakuPort.Cli/Program.cs:1072`, `src/PakuPort.Cli/Program.cs:2758`
 
 #### `PAKU_WINDOWED`  ·  presencia o valor
 
 Pantalla completa (ventana sin bordes) DE SERIE: el juego se escala y centra solo — viewScale se recalcula cada frame contra el tamaño real de la ventana —, así que no hay nada que recolocar al arrancar. F11 vuelve a ventana; PAKU_WINDOWED=1 arranca en ventana. El tamaño calculado arriba sigue siendo el que queda al salir del borderless. Excepción headless (CorteDeterminista.SinVentana): la ventana está oculta a propósito y cambiarle el estado hace que GLFW la muestre y robe el foco al usuario en mitad de un smoke.
 
-Usada en: `src/PakuPort.Cli/Program.cs:1033`, `src/PakuPort.Cli/Program.cs:2712`
+Usada en: `src/PakuPort.Cli/Program.cs:1033`, `src/PakuPort.Cli/Program.cs:2720`
 
 #### `PAKU_XBRZ`  ·  numero
 

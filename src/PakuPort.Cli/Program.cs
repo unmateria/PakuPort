@@ -1226,7 +1226,8 @@ new Thread(() =>
 
 while (!Raylib.WindowShouldClose())
 {{
-    if (Raylib.IsKeyPressed(KeyboardKey.F12)) break;
+    if (Raylib.IsKeyPressed(KeyboardKey.F12) &&
+        !(Raylib.IsKeyDown(KeyboardKey.LeftControl) || Raylib.IsKeyDown(KeyboardKey.RightControl))) break;
 
     // --- Input: teclado (la ruta que este mundo USA es la hardware: el juego engancha el
     // vector 09h y lee el 0x60 desde su propia ISR; ServicioIrq drena la cola y levanta IRQ1).
@@ -1248,6 +1249,13 @@ while (!Raylib.WindowShouldClose())
                 aspectCorrection = !aspectCorrection;
             else
                 Raylib.ToggleBorderlessWindowed();
+            continue;
+        }}
+        if ((KeyboardKey)rKey == KeyboardKey.F12 &&
+            (Raylib.IsKeyDown(KeyboardKey.LeftControl) || Raylib.IsKeyDown(KeyboardKey.RightControl)))
+        {{
+            escalaEntera = !escalaEntera;
+            Console.Error.WriteLine($""[VIDEO] escala entera: {{(escalaEntera ? ""SI"" : ""no"")}}"");
             continue;
         }}
         if (((KeyboardKey)rKey == KeyboardKey.F1 || (KeyboardKey)rKey == KeyboardKey.F2 ||
@@ -2943,8 +2951,10 @@ while (!Raylib.WindowShouldClose() && !splashDone)
 
 while (!Raylib.WindowShouldClose())
 {{
-    // F12 = salir del host (ESC pertenece al juego; ver SetExitKey arriba)
-    if (Raylib.IsKeyPressed(KeyboardKey.F12)) break;
+    // F12 = salir del host (ESC pertenece al juego; ver SetExitKey arriba). Con Ctrl NO sale:
+    // Ctrl+F12 es la escala entera, y si esto mirara F12 a secas el conmutador no llegaria nunca.
+    if (Raylib.IsKeyPressed(KeyboardKey.F12) &&
+        !(Raylib.IsKeyDown(KeyboardKey.LeftControl) || Raylib.IsKeyDown(KeyboardKey.RightControl))) break;
     // Replay de cinta: aqui solo se SUPRIME el input vivo (teclado/raton/autokeys/wiggle/clicks).
     // Los eventos grabados los reinyecta el HILO DEL JUEGO en MachineTimer.Poll
     // (InputTape.Reproduce): este bucle corre a fotogramas de reloj de pared, y hacerlo aqui
@@ -3676,10 +3686,13 @@ while (!Raylib.WindowShouldClose())
         catch (Exception _lex) {{ Console.Error.WriteLine(""[EXIT] no pude volcar logs/exit.log: "" + _lex.Message); }}
     }}
 
+    // The heartbeat runs on the window thread every 5 s of WALL clock: it reads guest memory
+    // through Raw, never mem.RdU16, or the corpus recorder logs that read as context of whatever
+    // case is open at that instant (a cross-thread race that made two identical recordings differ).
     if (runClock.ElapsedMilliseconds >= _nextHb)
     {{
         _nextHb += 5000;
-        System.Console.Error.WriteLine($""[HB] t={{runClock.ElapsedMilliseconds / 1000.0:F1}}s interp={{PakuPort.Core.Interp.InsnCount:N0}} ticks={{PakuPort.Core.Cpu.TickCount:N0}} retraceReads={{platform.Video.RetraceCounter:N0}} fps={{Raylib.GetFPS()}} bnd={{PakuPort.Core.Platform.DosPlatform.DiagBoundaryCalls}} bndIfOff={{PakuPort.Core.Platform.DosPlatform.DiagBoundaryIfOff}} irq0={{PakuPort.Core.Platform.DosPlatform.DiagIrq0}} irq1={{PakuPort.Core.Platform.DosPlatform.DiagIrq1}} pitHz={{platform.Pit.Channel0FrequencyHz:F1}} cyc={{cpu.CyclesPerMs}} ivt8={{mem.RdU16(0, 8 * 4 + 2):X4}}:{{mem.RdU16(0, 8 * 4):X4}} modo=0x{{platform.Video.VideoMode:X2}} {{platform.Video.Width}}x{{platform.Video.Height}} pres={{w}}x{{h}} fb={{fb.Length}} srm={{platform.Video.ShiftRegisterMode}} seq4={{platform.Video.SeqRegs[4]:X2}} gfx={{(platform.Video.IsGraphicsFromRegs ? 1 : 0)}} insn32={{PakuPort.Core.Interp32.Ejecutadas:N0}} irq32={{platform.Dpmi?.IrqEntregadas ?? 0}} "" +
+        System.Console.Error.WriteLine($""[HB] t={{runClock.ElapsedMilliseconds / 1000.0:F1}}s interp={{PakuPort.Core.Interp.InsnCount:N0}} ticks={{PakuPort.Core.Cpu.TickCount:N0}} retraceReads={{platform.Video.RetraceCounter:N0}} fps={{Raylib.GetFPS()}} bnd={{PakuPort.Core.Platform.DosPlatform.DiagBoundaryCalls}} bndIfOff={{PakuPort.Core.Platform.DosPlatform.DiagBoundaryIfOff}} irq0={{PakuPort.Core.Platform.DosPlatform.DiagIrq0}} irq1={{PakuPort.Core.Platform.DosPlatform.DiagIrq1}} pitHz={{platform.Pit.Channel0FrequencyHz:F1}} cyc={{cpu.CyclesPerMs}} ivt8={{BitConverter.ToUInt16(mem.Raw, 8 * 4 + 2):X4}}:{{BitConverter.ToUInt16(mem.Raw, 8 * 4):X4}} modo=0x{{platform.Video.VideoMode:X2}} {{platform.Video.Width}}x{{platform.Video.Height}} pres={{w}}x{{h}} fb={{fb.Length}} srm={{platform.Video.ShiftRegisterMode}} seq4={{platform.Video.SeqRegs[4]:X2}} gfx={{(platform.Video.IsGraphicsFromRegs ? 1 : 0)}} insn32={{PakuPort.Core.Interp32.Ejecutadas:N0}} irq32={{platform.Dpmi?.IrqEntregadas ?? 0}} "" +
             $""vista={{w}}x{{h}} asp={{pixelAspect:F6}} escala={{viewScale:F6}} ox={{viewOx:F2}} oy={{viewOy:F2}} "" +
             $""pantalla={{Raylib.GetScreenWidth()}}x{{Raylib.GetScreenHeight()}}"");
     }}
