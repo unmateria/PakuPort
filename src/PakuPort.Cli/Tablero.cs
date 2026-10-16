@@ -190,7 +190,8 @@ static class Tablero
                 var seg = funcs.Select(f => f.cs).FirstOrDefault(c => lineal >= c * 16 && lineal < c * 16 + 0x10000);
                 if (seg == 0) continue;
                 ushort ipU = (ushort)(lineal - seg * 16);
-                bool esVuelta = u.GetProperty("unidad").GetString() == "vuelta";
+                // Un corpus de antes de las vueltas de bucle no trae "unidad": todo son llamadas.
+                bool esVuelta = u.TryGetProperty("unidad", out var un) && un.GetString() == "vuelta";
                 string porque = u.TryGetProperty("sin_casos_porque", out var sp) ? sp.GetString() ?? "" : "";
                 AnadeSinCasos(outDir, func, seg, ipU, esVuelta, porque, mundoBytes);
                 funcs.Add((func, 0, 0, seg, ipU, false, esVuelta));
@@ -461,9 +462,11 @@ static class Tablero
             L("  cuando el programa vuelve a ella —o SALE del bucle— con la MISMA pila. No hay");
             L("  direccion de retorno en la pila y no hay `ret` que dar.");
             if (ex!.CasosQueSalen > 0)
-                L($"  De tus {f.Casos} casos, {ex.CasosQueSalen} salen del bucle en vez de volver: esos son los que");
+                L(ex.CasosQueSalen == 1
+                    ? $"  De tus {f.Casos} casos, 1 sale del bucle en vez de volver: es el que mide"
+                    : $"  De tus {f.Casos} casos, {ex.CasosQueSalen} salen del bucle en vez de volver: esos son los que");
             if (ex.CasosQueSalen > 0)
-                L("  miden que aciertes la condicion de salida.");
+                L(ex.CasosQueSalen == 1 ? "  que aciertes la condicion de salida." : "  miden que aciertes la condicion de salida.");
             else
                 L("  ⚠ Ninguno de tus casos SALE del bucle: esta partida no cubrio la condicion de salida,");
             if (ex.CasosQueSalen == 0)

@@ -13,10 +13,8 @@
 /// directly through the ports. These tables are only the INITIAL CONTENT; the renderer always
 /// reads plane 2.
 ///
-/// NOTE on <see cref="Int10hHandler.Font8x8"/>: that older table (used only to draw text in
-/// GRAPHICS modes) holds just the first 128 characters and its 'S' (0x53) glyph differs from the
-/// IBM ROM one. It is left untouched on purpose; text mode uses <see cref="Font8x8"/> from here.
-/// Measured by tools/textmode_test.
+/// <see cref="Int10hHandler.Font8x8"/> (text in GRAPHICS modes) is the first 128 characters of
+/// <see cref="Font8x8"/> from here. It used to be a table of its own whose 'S' differed.
 /// </summary>
 public static class RomFonts
 {
