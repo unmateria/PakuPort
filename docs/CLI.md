@@ -386,6 +386,7 @@ pakuport interp-verify --game games\catch\game.json --registros
 
 ```
 pakuport remake [<id>]
+pakuport remake doctor  <id> [--export <dir>] [--json]
 pakuport remake capture <id> [--minutos <n>] [--teclas <keys>] [--raton] [--export <dir>]
 pakuport remake study   <id> [--export <dir>]
 pakuport remake hoja    <id>
@@ -402,7 +403,15 @@ omitted and exactly one game has a `remake\` folder, that one is used.
 
 - **`remake [<id>]`** (status) says which step you are on and prints the literal next command
   (`Siguiente:` = "next"). It also surfaces bad news from the last judgement (low coverage,
-  assets that lost their art, an oversized capture).
+  assets that lost their art, an oversized capture), and whether the study is current
+  (`estudio: vigente`) or was made from another capture (`antiguo`).
+- **`doctor`** checks that the export still matches what generated it. `export` leaves a
+  `pakuport-host.json` in the export with the `game.json`, the game binary, the host's
+  `Program.cs` and `.csproj`, the template's hash and the exact export command. A host edited by
+  hand, generated for another `game.json` or binary, or one that cannot record what the capture
+  needs (the 32-bit LE host records neither tape nor blits) is refused, with the command that
+  fixes it. An export made before this contract has none: regenerate it once with that command.
+  A changed template only warns. `capture` runs the same check before recording.
 - **`capture`** records a session with the right telemetry switched on. Requires `cyclesPerMs`
   in `game.json` (without a calibrated speed the tape does not replay identically). It refreshes
   the export's `Core\` from `src\`, builds it, and runs it, recording `remake\cinta.tape` (the
@@ -410,10 +419,16 @@ omitted and exactly one game has a `remake\` folder, that one is used.
   (default 3). Without `--teclas` the window opens and you play; with `--teclas <keys>` the run is
   scripted with a hidden window, and `--raton` then also moves the mouse during the recording.
   If almost nothing was recorded while the game did draw, it stops and explains that the game
-  composes off-screen, which the kit cannot follow yet.
+  composes off-screen, which the kit cannot follow yet. Each run records into
+  `remake\intentos\<date>`, and the tape and the telemetry are published **together**, only if
+  the run ended well (no error, no `[EXIT] Error`, events on the tape); a failed run leaves the
+  previous capture as it was. The published attempt is deleted; the last three failed ones are
+  kept to look at.
 - **`study`** measures the capture and produces the catalogue, reference images (`remake\ref\`),
   drawing groups, layer order, text, the dossier and `remake\pendiente.json` (the list of art to
-  make). Needs the tape from `capture`.
+  make). Needs the tape from `capture`. **Any step that fails stops it.** It leaves a seal
+  (`estudio-procedencia.json`) with the fingerprint of the capture, the binary and the tools it
+  used; `check` and `judge` refuse a study made from another capture.
 - **`hoja`** renders the whole job as one page to look at (`tools\remake_kit\build_hoja.py`).
 - **`try`** shows one image before and after, in seconds (`tools\remake_kit\try_asset.py`). The
   keys come from the `hoja`. `--ms` is passed through to that script (see source).
@@ -421,7 +436,11 @@ omitted and exactly one game has a `remake\` folder, that one is used.
   `study`) without running the game (`tools\remake_kit\check_arte.py`).
 - **`judge`** runs the tape with and without the remake and compares
   (`tools\remake_kit\judge_fidelidad.py`). It needs `remake\remake.json`, the admitted art; if it
-  is missing the CLI tells you to run `check`.
+  is missing the CLI tells you to run `check`. Both runs stop at the same instruction
+  (`--ms` × `cyclesPerMs`) and run in copies of the host, so the export is not touched. It is
+  RED if the host fails or if **nothing was replaced** (neither blits nor logical drawings): with
+  that tape the art is not being judged. A RED judgement keeps the output of each run in
+  `remake\juicio-rojo\` (the last one only).
 - **`play`** runs the export with the remake applied (`PAKU_REMAKE`), or original if there is no
   admitted art. Note this is `remake play`, unrelated to the top-level `play` of section 6.
 

@@ -4,6 +4,12 @@
     <ProjectReference Include="..\PakuPort.Core\PakuPort.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- The host templates live here: its hash says which template generated an export
+         (ExportCapabilities.TemplateHash). -->
+    <EmbeddedResource Include="Program.cs" LogicalName="PakuPort.HostTemplate.cs" />
+  </ItemGroup>
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>

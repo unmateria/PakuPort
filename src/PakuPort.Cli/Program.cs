@@ -919,7 +919,7 @@ static void CopyCoreToExport(string outDir) => ExportCore.Copiar(outDir);
 /// VRAM viva a 60 fps. MachineTimer.Poll NO se engancha a propósito: dispararía las ISR por el
 /// camino de 16 bits y se comería las IRQ antes de que el intérprete de 32 las viera
 /// (FlatServices.ServicioIrq, comentario del reloj propio).</summary>
-static int ExportLeHost(GameConfig game, string outDir)
+static int ExportLeHost(GameConfig game, string outDir, string gamePath)
 {
     string exeName = Path.GetFileName(game.ExePath);
     Console.WriteLine($"  formato LE: host de 32 bits (sin lifter; el juego corre en Interp32)");
@@ -1698,6 +1698,8 @@ static bool IsModifierScancode(byte sc) =>
 </Project>
 ";
     File.WriteAllText(Path.Combine(outDir, $"{game.Id}.csproj"), csproj);
+    ExportCapabilities.Write(outDir, game.Id, gamePath, game.ExePath, game.CyclesPerMs, "le32",
+        $"pakuport export --game \"{gamePath}\" --out \"{outDir}\"", supportsCapture: false);
 
     File.WriteAllText(Path.Combine(outDir, "README.md"),
         $"# {game.Title} — host LE de 32 bits generado por PakuPort\n\n" +
@@ -1719,7 +1721,7 @@ static int CmdExport(GameConfig game, string outDir, string gamePath, bool bootR
     // Mundo plano de 32 bits (LE + extensor DOS): no hay lifter ni corpus ni memimage — el juego
     // corre TAL CUAL en Interp32 sobre FlatServices. Rama aparte a propósito: la plantilla de 16
     // bits queda intacta (es la que sostiene a los juegos de 16 bits con los que se probo).
-    if (game.Format == "le") return ExportLeHost(game, outDir);
+    if (game.Format == "le") return ExportLeHost(game, outDir, gamePath);
     if (!string.IsNullOrEmpty(probeKeys)) Console.WriteLine($"  --probe-keys: el probe de descubrimiento conduce con \"{probeKeys}\" (determinista por presupuesto)");
     Console.WriteLine($"  Salida: {Path.GetFullPath(outDir)}");
     if (bootReal) Console.WriteLine("  --boot-real: arranque por startup real (se ignora gameplay_snapshot)");
@@ -3919,6 +3921,14 @@ static bool IsModifierScancode(byte sc) =>
 </Project>
 ";
     File.WriteAllText(Path.Combine(outDir, $"{game.Id}.csproj"), csproj);
+    // pakuport-host.json: what this host was generated from, for `remake doctor` / `capture`.
+    // Capture needs a boot it can replay: the real startup, or a COM/MZ entry without a snapshot.
+    ExportCapabilities.Write(outDir, game.Id, gamePath, game.ExePath, game.CyclesPerMs, "dos16",
+        $"pakuport export --game \"{gamePath}\" --out \"{outDir}\"" + (bootReal ? " --boot-real" : "") +
+        (seedsFile != null ? $" --seeds \"{seedsFile}\"" : "") +
+        (!string.IsNullOrEmpty(probeKeys) ? $" --probe-keys \"{probeKeys}\"" : "") +
+        (portadasDir != null ? $" --portadas \"{portadasDir}\"" : ""),
+        supportsCapture: bootMem != null || snapEntryKey < 0);
 
     // 2f. README con instrucciones. ES LO PRIMERO QUE VE UN TERCERO, asi que dice lo que la
     // carpeta ES de verdad. La version anterior seguia diciendo "falta host de renderizado para

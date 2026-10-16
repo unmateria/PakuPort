@@ -20,6 +20,9 @@
 
   <ItemGroup>
     <Content Include="vectors\**" CopyToOutputDirectory="PreserveNewest" />
+    <Compile Include="..\..\src\PakuPort.Cli\CapturePublication.cs" Link="CapturePublication.cs" />
+    <Compile Include="..\..\src\PakuPort.Cli\ExportCapabilities.cs" Link="ExportCapabilities.cs" />
+    <Compile Include="..\..\src\PakuPort.Cli\RemakeEvidence.cs" Link="RemakeEvidence.cs" />
   </ItemGroup>
 
 </Project>

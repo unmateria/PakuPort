@@ -43,10 +43,11 @@ public static class Interp
     public static Dictionary<int, int>? OverlayStarts;
 
     static readonly bool _traceOn = Environment.GetEnvironmentVariable("PAKU_INTERP_TRACE") == "1";
-    // PAKU_INTERP_TRACE_FROM / _TO: limit the trace to a window of the guest clock (TickCount),
-    // so studying one key press does not mean logging the whole boot.
+    // PAKU_INTERP_TRACE_FROM: first guest-clock tick (TickCount) the trace logs, so studying one
+    // key press does not mean logging the whole boot.
     static readonly long _traceFrom =
         long.TryParse(Environment.GetEnvironmentVariable("PAKU_INTERP_TRACE_FROM"), out var tf) ? tf : 0;
+    // PAKU_INTERP_TRACE_TO: last guest-clock tick the trace logs.
     static readonly long _traceTo =
         long.TryParse(Environment.GetEnvironmentVariable("PAKU_INTERP_TRACE_TO"), out var tt) ? tt : long.MaxValue;
     public static bool Trace => _traceOn && Cpu.TickCount >= _traceFrom && Cpu.TickCount <= _traceTo;

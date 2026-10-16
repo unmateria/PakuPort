@@ -30,6 +30,7 @@ using PakuPort.Core;
 static class RemakeKit
 {
     const string Uso = @"uso: pakuport remake [<id>]                      dice en qué paso estás
+     pakuport remake doctor  <id> [--export DIR] [--json]   ¿el export coincide con sus fuentes?
      pakuport remake capture <id> [--minutos N] [--teclas S] [--raton] [--export DIR]
      pakuport remake study   <id> [--export DIR]
      pakuport remake hoja    <id>                     el trabajo, en una página que se mira
@@ -42,7 +43,7 @@ static class RemakeKit
     {
         string verbo = rest.Length > 0 && !rest[0].StartsWith('-') ? rest[0] : "";
         bool esVerbo = verbo is "capture" or "study" or "check" or "judge" or "play"
-                             or "hoja" or "try";
+                             or "hoja" or "try" or "doctor";
 
         // `pakuport remake <id>` y `pakuport remake` (sin nada) son la misma cosa: estado.
         if (!esVerbo) return Estado(ResuelveId(verbo));
@@ -54,6 +55,7 @@ static class RemakeKit
         return verbo switch
         {
             "capture" => Capture(id, flags),
+            "doctor" => Doctor(id, flags),
             "study" => Study(id, flags),
             "check" => Check(id),
             "judge" => Judge(id, flags),
@@ -111,6 +113,10 @@ static class RemakeKit
         string exp = DirExport(id, null);
 
         Console.WriteLine($"== {titulo} ==");
+        foreach (var (hecho, sello, nombre) in new[] {
+                     (Pendiente(id), SelloEstudio(id), "estudio"),
+                     (Path.Combine(DirRemake(id), "informe.json"), SelloJuicio(id), "juicio") })
+            if (File.Exists(hecho)) Console.WriteLine($"  {nombre}: {RemakeEvidence.Status(sello)}");
 
         if (!Directory.Exists(exp))
         {
@@ -135,6 +141,12 @@ static class RemakeKit
         {
             Console.WriteLine($"  Hay partida grabada ({LineasDe(Cinta(id))} eventos) pero nadie la ha estudiado.");
             Console.WriteLine($"Siguiente:  pakuport remake study {id}");
+            return 0;
+        }
+
+        if (File.Exists(SelloEstudio(id)) && RemakeEvidence.Status(SelloEstudio(id)) != "vigente")
+        {
+            Console.WriteLine($"Siguiente:  pakuport remake study {id}    (el estudio ya no es de esta captura)");
             return 0;
         }
 
@@ -193,12 +205,28 @@ static class RemakeKit
 
     // ---------------------------------------------------------------- capture
 
+    static int Doctor(string id, string[] flags)
+    {
+        if (!File.Exists(GameJson(id))) { Console.Error.WriteLine($"no existe {GameJson(id)}"); return 1; }
+        var report = ExportCapabilities.Inspect(DirExport(id, Opt(flags, "--export")), id, GameJson(id));
+        ExportCapabilities.Print(report, HasFlag(flags, "--json"));
+        return report.ReadyForCapture ? 0 : 1;
+    }
+
     static int Capture(string id, string[] flags)
     {
         if (!File.Exists(GameJson(id))) { Console.Error.WriteLine($"no existe {GameJson(id)}"); return 1; }
         var juego = GameConfig.Load(GameJson(id));
         string exp = DirExport(id, Opt(flags, "--export"));
         if (!Directory.Exists(exp)) { Console.Error.WriteLine($"no existe el export {exp}: pásalo por `pakuport port` primero"); return 1; }
+
+        // Capture refreshes Core and rebuilds, but not the host's Program.cs: a host edited by hand,
+        // generated for another game.json or without the capture levers would record a poorer
+        // capture and not say so. Checked before anything is deleted or rebuilt.
+        var diagnostico = ExportCapabilities.Inspect(exp, id, GameJson(id));
+        if (!diagnostico.ReadyForCapture || diagnostico.Warnings.Length > 0)
+            ExportCapabilities.Print(diagnostico, json: false);
+        if (!diagnostico.ReadyForCapture) return 1;
 
         // La cinta ancla el reloj al contador de instrucciones (InputTape.ClockLocked), y eso
         // exige gobernador calibrado. Sin él las dos corridas del juez divergen y la comparación
@@ -216,7 +244,13 @@ static class RemakeKit
 
         string? teclas = Opt(flags, "--teclas");
         int minutos = int.TryParse(Opt(flags, "--minutos"), out var mm) ? mm : 3;
-        string cinta = Path.GetFullPath(Cinta(id));
+        // Each run records into its own attempt directory, and only a run that ended well is
+        // published (tape and telemetry together). Before, a failed run left the previous tape
+        // paired with the new traces, and study read a capture that never existed.
+        string intentos = Path.GetFullPath(Path.Combine(DirRemake(id), "intentos"));
+        string intento = Path.Combine(intentos, DateTime.UtcNow.ToString("yyyyMMdd-HHmmss") + "-" + Guid.NewGuid().ToString("N")[..8]);
+        Directory.CreateDirectory(intento);
+        string cinta = Path.Combine(intento, "cinta.tape");
 
         // Las palancas NO se dejan a la memoria de nadie: aquí se imponen, porque fallar en
         // cualquiera de las dos da un catálogo pobre SIN DECIR NADA.
@@ -234,6 +268,10 @@ static class RemakeKit
             ["PAKU_LOG_AUDIO_EV"] = "1",
             ["PAKU_SAMPLE_PC_MS"] = "1",
             ["PAKU_TAPE_RECORD"] = cinta,
+            // Nothing inherited from another test: a PAKU_TAPE_REPLAY left in the shell would
+            // turn the recording off, and the speed is the one in game.json.
+            ["PAKU_TAPE_REPLAY"] = "",
+            ["PAKU_CYCLES"] = juego.CyclesPerMs.ToString(),
             ["PAKU_NOSPLASH"] = "1",
             // Sin esto el contador de fotogramas no avanza fuera del host con ventana, y el
             // ORDEN DE DIBUJO —lo que decide qué tapa a qué— habría que estimarlo.
@@ -301,11 +339,13 @@ static class RemakeKit
         var (rc, salida) = Proc("dotnet", "run -c Release --no-build", exp, limiteMs + 120_000, env);
         if (rc == -1) Console.WriteLine($"  (tope de {minutos} min alcanzado, la partida se corta ahí)");
 
-        if (!File.Exists(cinta))
+        if (rc != 0 && rc != -1 || salida.Any(l => l.Contains("[EXIT] Error")) || LineasDe(cinta) == 0)
         {
-            Console.Error.WriteLine("no se escribió la cinta. Últimas líneas del juego:");
+            Console.Error.WriteLine(LineasDe(cinta) == 0
+                ? "La cinta salió vacía: no se publica nada y se conserva la captura anterior."
+                : $"El juego no terminó bien ({rc}): no se publica nada y se conserva la captura anterior.");
             foreach (var l in salida.TakeLast(12)) Console.Error.WriteLine("  " + l);
-            return 1;
+            return FallaIntento(intentos, intento);
         }
 
         // La paleta sale por stderr mezclada con todo lo demás; aquí se aparta a su propio
@@ -320,8 +360,7 @@ static class RemakeKit
         // juego una vez entre `capture` y `study` para que el estudio se quedara sin datos y
         // dijera "no existe blit.log" — pasó dos veces seguidas antes de verlo. Aquí deja de
         // depender de que nadie toque el export.
-        string cap = Path.Combine(DirRemake(id), "captura");
-        if (Directory.Exists(cap)) Directory.Delete(cap, true);
+        string cap = Path.Combine(intento, "captura");
         Directory.CreateDirectory(cap);
         foreach (var f in new[] { "blit.log", "blitraw.bin", "paleta.log", "audio-events.log",
                                   "pcsample.log", "input.log" })
@@ -340,7 +379,7 @@ static class RemakeKit
         long blits = Tam(Path.Combine(cap, "blit.log"));
         long crudo = Tam(Path.Combine(cap, "blitraw.bin"));
         Console.WriteLine($"Grabados {LineasDe(cinta)} eventos de entrada · blit.log {blits / 1024} KiB · "
-                          + $"blitraw.bin {crudo / 1024} KiB · cinta.tape");
+                          + $"blitraw.bin {crudo / 1024} KiB");
 
         // Un juego que dibuja pero cuya telemetría sale vacía es el fallo más caro de todos: el
         // resto de la cadena funciona, produce un encargo vacío y parece que "no hay assets".
@@ -359,10 +398,21 @@ static class RemakeKit
             Console.WriteLine("  Para un juego así el kit NO puede identificar assets en ejecución todavía,");
             Console.WriteLine("  y decirlo es la respuesta correcta: seguir daría un encargo vacío que");
             Console.WriteLine("  parece 'este juego no tiene gráficos'.");
-            return 1;
+            return FallaIntento(intentos, intento);
         }
+        CapturePublication.Publish(intento, Path.GetFullPath(DirRemake(id)));
+        CapturePublication.Prune(intentos);
+        Console.WriteLine($"  cinta y telemetría publicadas en {DirRemake(id)}");
         Console.WriteLine($"Siguiente:  pakuport remake study {id}");
         return 0;
+    }
+
+    /// <summary>A failed attempt stays for diagnosis (only the latest few), and nothing is published.</summary>
+    static int FallaIntento(string intentos, string intento)
+    {
+        Console.Error.WriteLine($"El intento queda en {intento}");
+        CapturePublication.Prune(intentos);
+        return 1;
     }
 
     // ---------------------------------------------------------------- study
@@ -391,51 +441,73 @@ static class RemakeKit
         Directory.CreateDirectory(cat);
 
         Console.WriteLine($"== estudiando {id} ==");
+        // The seal ties this study to the exact capture and tools it was made from; check and
+        // judge refuse a study whose capture has changed since. A failed study leaves no seal.
+        string[] entradas = [GameJson(id), Cinta(id), GameConfig.Load(GameJson(id)).ExePath,
+            typeof(RemakeKit).Assembly.Location,
+            .. new[] { "blit.log", "blitraw.bin", "paleta.log", "audio-events.log", "pcsample.log", "present" }
+                .Select(f => Path.Combine(logs, f)),
+            "tools/blit_catalog/build_catalog.py", "tools/blit_catalog/build_tracks.py",
+            "tools/player_id/find_player.py", "tools/scene_hist/build_scenes.py",
+            "tools/audio_catalog/build_sounds.py", "tools/dossier/build_dossier.py",
+            "tools/remake_kit/build_ref.py", "tools/remake_kit/build_grupos.py",
+            "tools/remake_kit/build_capas.py", "tools/remake_kit/build_texto.py",
+            "tools/remake_kit/build_pendiente.py", "tools/remake_kit/pngio.py"];
+        string antes = RemakeEvidence.Fingerprint(entradas);
+        if (File.Exists(SelloEstudio(id))) File.Delete(SelloEstudio(id));
 
         // El orden es el del encadenado real: catálogo -> tracks -> jugador; escenas y sonidos
         // van por su cuenta; el dossier va el último porque consume a los demás.
         if (Py("tools/blit_catalog/build_catalog.py", "--logs", logs, "--out", cat) != 0) return 1;
-        Py("tools/blit_catalog/build_tracks.py", cat);
-        Py("tools/player_id/find_player.py", cat, "--tape", Cinta(id),
-           "--cycles", GameConfig.Load(GameJson(id)).CyclesPerMs.ToString());
+        // Every step must succeed: a step that failed used to be ignored, and the study came out
+        // half-made or stale without a word.
+        if (Py("tools/blit_catalog/build_tracks.py", cat) != 0) return 1;
+        if (Py("tools/player_id/find_player.py", cat, "--tape", Cinta(id),
+               "--cycles", GameConfig.Load(GameJson(id)).CyclesPerMs.ToString()) != 0) return 1;
 
         string escenas = Path.Combine(rem, "escenas.json");
         string pcs = Path.Combine(logs, "pcsample.log");
-        if (File.Exists(pcs)) Py("tools/scene_hist/build_scenes.py", pcs, "--json", escenas);
-        else Console.WriteLine("  (sin pcsample.log: no hay segmentación en escenas)");
+        if (File.Exists(pcs)) { if (Py("tools/scene_hist/build_scenes.py", pcs, "--json", escenas) != 0) return 1; }
+        else
+        {
+            // An empty file, not a missing one: a missing escenas.json was read as the one left
+            // by an older capture.
+            Console.WriteLine("  (sin pcsample.log: no hay segmentación en escenas)");
+            File.WriteAllText(escenas, "{\"escenas\":[]}");
+        }
 
         string audio = Path.Combine(logs, "audio-events.log");
-        if (File.Exists(audio)) Py("tools/audio_catalog/build_sounds.py", "--log", audio, "--out", DirJuego(id));
+        if (File.Exists(audio) && Py("tools/audio_catalog/build_sounds.py", "--log", audio, "--out", DirJuego(id)) != 0) return 1;
 
-        Py("tools/dossier/build_dossier.py", id, "--out", rem, "--catalog", cat,
-           "--blitraw", Path.Combine(logs, "blitraw.bin"), "--blit-log", Path.Combine(logs, "blit.log"));
+        if (Py("tools/dossier/build_dossier.py", id, "--out", rem, "--catalog", cat,
+               "--blitraw", Path.Combine(logs, "blitraw.bin"), "--blit-log", Path.Combine(logs, "blit.log")) != 0) return 1;
 
         // Los píxeles de los blits reemplazables, atados a su identidad por las marcas del
         // nivel 3. Es lo que convierte el encargo en algo que se puede mirar.
-        Py("tools/remake_kit/build_ref.py", "--raw", Path.Combine(logs, "blitraw.bin"),
-           "--out", Path.Combine(rem, "ref"), "--json", Path.Combine(rem, "ref.json"),
-           "--paleta", Path.Combine(logs, "paleta.log"),
-           "--blit-log", Path.Combine(logs, "blit.log"),
-           "--present", Path.Combine(logs, "present"));
+        if (Py("tools/remake_kit/build_ref.py", "--raw", Path.Combine(logs, "blitraw.bin"),
+               "--out", Path.Combine(rem, "ref"), "--json", Path.Combine(rem, "ref.json"),
+               "--paleta", Path.Combine(logs, "paleta.log"),
+               "--blit-log", Path.Combine(logs, "blit.log"),
+               "--present", Path.Combine(logs, "present")) != 0) return 1;
 
         // Los DIBUJOS LÓGICOS: en un juego que compone fila a fila, es la única forma de tener
         // una figura entera de la que colgar arte. Sin esto un juego de prueba ofrecía 3 assets
         // reemplazables de 1165, y el resto son tiras de un píxel de alto.
-        Py("tools/remake_kit/build_grupos.py", "--blit-log", Path.Combine(logs, "blit.log"),
-           "--out", Path.Combine(rem, "grupos.json"),
-           "--present", Path.Combine(logs, "present"),
-           "--ref-dir", Path.Combine(rem, "ref"),
-           "--cycles", GameConfig.Load(GameJson(id)).CyclesPerMs.ToString());
+        if (Py("tools/remake_kit/build_grupos.py", "--blit-log", Path.Combine(logs, "blit.log"),
+               "--out", Path.Combine(rem, "grupos.json"),
+               "--present", Path.Combine(logs, "present"),
+               "--ref-dir", Path.Combine(rem, "ref"),
+               "--cycles", GameConfig.Load(GameJson(id)).CyclesPerMs.ToString()) != 0) return 1;
 
         // Orden de dibujo y persistencia del fondo: qué tapa a qué, y si el sprite se queda o
         // el juego repinta debajo. Son las dos preguntas que tumbaron el remake de una intro.
-        Py("tools/remake_kit/build_capas.py", "--blit-log", Path.Combine(logs, "blit.log"),
-           "--out", Path.Combine(rem, "capas.json"));
+        if (Py("tools/remake_kit/build_capas.py", "--blit-log", Path.Combine(logs, "blit.log"),
+               "--out", Path.Combine(rem, "capas.json")) != 0) return 1;
 
         // Glifos agrupados en líneas legibles y rutinas procedurales declaradas como tales.
-        Py("tools/remake_kit/build_texto.py", "--blit-log", Path.Combine(logs, "blit.log"),
-           "--raw", Path.Combine(logs, "blitraw.bin"), "--refs", Path.Combine(rem, "ref.json"),
-           "--ref-dir", Path.Combine(rem, "ref"), "--out", Path.Combine(rem, "texto.json"));
+        if (Py("tools/remake_kit/build_texto.py", "--blit-log", Path.Combine(logs, "blit.log"),
+               "--raw", Path.Combine(logs, "blitraw.bin"), "--refs", Path.Combine(rem, "ref.json"),
+               "--ref-dir", Path.Combine(rem, "ref"), "--out", Path.Combine(rem, "texto.json")) != 0) return 1;
 
         int rc = Py("tools/remake_kit/build_pendiente.py", id, "--catalog", cat, "--out", rem,
                     "--escenas", escenas, "--refs", Path.Combine(rem, "ref.json"),
@@ -443,6 +515,15 @@ static class RemakeKit
                     "--texto", Path.Combine(rem, "texto.json"),
                     "--grupos", Path.Combine(rem, "grupos.json"));
         if (rc != 0) return rc;
+
+        if (!RemakeEvidence.Complete(SelloEstudio(id), entradas, antes,
+                [cat, Path.Combine(rem, "ref"), Pendiente(id), Manifiesto(id), escenas,
+                 Path.Combine(rem, "ref.json"), Path.Combine(rem, "capas.json"),
+                 Path.Combine(rem, "grupos.json"), Path.Combine(rem, "texto.json")]))
+        {
+            Console.Error.WriteLine("La captura o las herramientas cambiaron durante el estudio, o falta un resultado: repite study.");
+            return 1;
+        }
 
         Console.WriteLine($"Referencias en {Path.Combine(rem, "ref")}\\");
         Console.WriteLine($"Trabajo pendiente -> {Pendiente(id)}");
@@ -454,6 +535,7 @@ static class RemakeKit
 
     static int Check(string id)
     {
+        if (!EstudioUsable(id)) return 1;
         if (!File.Exists(Manifiesto(id)))
         {
             Console.Error.WriteLine($"no hay contrato que validar: falta {Manifiesto(id)}");
@@ -473,8 +555,44 @@ static class RemakeKit
             Console.Error.WriteLine($"Siguiente:  pakuport remake check {id}");
             return 1;
         }
-        return Py("tools/remake_kit/judge_fidelidad.py", id,
-                  "--export", DirExport(id, Opt(flags, "--export")), "--remake", DirRemake(id));
+        if (!EstudioUsable(id)) return 1;
+        string rem = DirRemake(id);
+        string exp = DirExport(id, Opt(flags, "--export"));
+        // What the verdict depends on: the capture, the art and its contract, the judge and the
+        // host it runs (its template and Core; the binaries are rebuilt from those).
+        string[] entradas = [GameJson(id), Cinta(id), Runtime(id), DirHd(id), Pendiente(id),
+                             Path.Combine(rem, "escenas.json"), "tools/remake_kit/judge_fidelidad.py",
+                             Path.Combine(exp, "Program.cs"), Path.Combine(exp, "Core"),
+                             GameConfig.Load(GameJson(id)).ExePath];
+        string antes = RemakeEvidence.Fingerprint(entradas);
+        if (File.Exists(SelloJuicio(id))) File.Delete(SelloJuicio(id));
+        int rc = Py("tools/remake_kit/judge_fidelidad.py", id, "--export", exp, "--remake", rem);
+        if (rc == 0 && !RemakeEvidence.Complete(SelloJuicio(id), entradas, antes,
+                [Path.Combine(rem, "informe.json"), Path.Combine(rem, "informe.md")]))
+        {
+            Console.Error.WriteLine("Algo de lo juzgado cambió durante el juicio: repite judge.");
+            return 1;
+        }
+        return rc;
+    }
+
+    static string SelloEstudio(string id) => Path.Combine(DirRemake(id), "estudio-procedencia.json");
+    static string SelloJuicio(string id) => Path.Combine(DirRemake(id), "juicio-procedencia.json");
+
+    /// <summary>A study made from another capture must not be checked or judged. Studies older than
+    /// the seal are still accepted, with a warning.</summary>
+    static bool EstudioUsable(string id)
+    {
+        if (!File.Exists(SelloEstudio(id)))
+        {
+            if (File.Exists(Pendiente(id)))
+                Console.WriteLine("  (estudio sin sello: es anterior a esta versión del kit; repite study para atarlo a su captura)");
+            return true;
+        }
+        string estado = RemakeEvidence.Status(SelloEstudio(id));
+        if (estado == "vigente") return true;
+        Console.Error.WriteLine($"No se puede usar este estudio ({estado}). Siguiente: pakuport remake study {id}");
+        return false;
     }
 
     /// <summary>El bucle corto: una imagen, y el antes y el después en segundos. `rest` es
@@ -529,7 +647,8 @@ static class RemakeKit
         var m = System.Text.RegularExpressions.Regex.Match(l, @"pixeles_no_negros=(\d+)");
         return m.Success ? int.Parse(m.Groups[1].Value) : 0;
     }
-    static int LineasDe(string p) => File.Exists(p) ? File.ReadLines(p).Count() : 0;
+    static int LineasDe(string p) => File.Exists(p) ? File.ReadLines(p)
+        .Count(l => !string.IsNullOrWhiteSpace(l) && !l.TrimStart().StartsWith('#')) : 0;
 
     static JsonElement LeePendiente(string id)
     {

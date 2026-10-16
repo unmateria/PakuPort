@@ -40,6 +40,9 @@ If you touched the platform layer, also run the probe(s) for that subsystem
    `LICENSES/THIRD-PARTY.txt`.
 8. **A new file in `src/PakuPort.Core/` must be added to `src/PakuPort.Cli/ExportCore.cs`**,
    or every export stops compiling with `CS0103` while `src/` builds fine.
+   `python tools\export_core_check\check_fleet.py` compiles your exports with the current core,
+   in temporary copies, without regenerating them; building an export only compiles the core it
+   already had.
 9. **No games, ever.** Do not commit game files, dumps of game memory, recordings of real games,
    or code bytes taken from a commercial binary — not even in tests. Use the bundled sample or a
    synthetic probe.

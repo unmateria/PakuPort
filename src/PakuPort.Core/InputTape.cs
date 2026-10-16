@@ -27,7 +27,7 @@ public static class InputTape
     /// invitado, para poder medir A/B si algo se rompe con la cinta puesta y no sin ella.
     /// Valores, separados por comas: <c>retrace</c> (la fase de 0x3DA), <c>sb</c> (la IRQ del
     /// bloque de la Sound Blaster), <c>hora</c> (fecha y hora, ver GuestClock), <c>espera</c> (el
-    /// tiempo que pasa mientras la BIOS espera una tecla, ver Cpu.PollDeviceWait), <c>todo</c>.
+    /// tiempo que pasa mientras la BIOS espera una tecla, ver Int16hHandler.EsperaUnPoco), <c>todo</c>.
     /// Sin la variable no cambia nada.
     ///
     /// Existe porque un cambio que solo se activa con la cinta no se puede bisecar de otra forma:

@@ -23,6 +23,8 @@ capture ─► study ─► (draw) ─► check ─► judge ─► play
 ```
 
 `pakuport remake` with no verb tells you where you are and the literal next command.
+`pakuport remake doctor <id>` checks that the export still matches what generated it (see
+[CLI.md](CLI.md)); `capture` runs that check itself.
 
 ### 1. `pakuport remake capture <id>`
 
@@ -37,6 +39,8 @@ tape, and keeps the results in `games/<id>/remake/captura/`.
   through `PAKU_AUTOKEYS` (`~` is a pause). `--raton` wiggles the mouse into the tape.
 - It refreshes the export's copy of the core and rebuilds it first, so it never measures an
   old engine.
+- A run that fails publishes nothing: the tape and the telemetry are replaced together, or not
+  at all.
 
 ### 2. `pakuport remake study <id>`
 
@@ -52,6 +56,9 @@ Turns the capture into the job:
 | `manifiesto.json` | what was measured, for the next steps |
 
 `pakuport remake hoja <id>` renders the whole brief as one HTML page.
+
+If any step fails, `study` stops instead of leaving a half-made brief, and it seals what it was
+made from: `check` and `judge` refuse a study whose capture has changed since.
 
 ### 3. Draw
 
@@ -71,8 +78,12 @@ Replays the tape twice, without and with the remake, and reports:
 
 - **no perturbation**: the guest draws exactly the same blits in both runs (a signature of
   every blit). The remake must never change the game; this is the non-negotiable check;
-- coverage by blits, the biggest gaps (assets drawn most often with no art), drift (instances
-  outside their box) and regressions; the report goes to `informe.md`.
+- coverage by blits and, separately, by logical drawings (`grupo:` figures), the biggest gaps
+  (assets drawn most often with no art), drift (instances outside their box) and regressions;
+  the report goes to `informe.md`.
+
+Both runs stop at the same instruction. The verdict is RED if the host fails, or if nothing at
+all was replaced: a green that judged no art would mean nothing.
 
 ### 6. `pakuport remake play <id>`
 
@@ -102,9 +113,9 @@ replacements active, video memory stays byte-identical.
   texture first appeared. A sprite that moves by erasing and redrawing itself every frame never
   matches, so its HD texture shows up pierced, with original pixels through the holes. Visible
   in the bundled sample (`samples/catch`). Static screens, backgrounds and UI work.
-- **Coverage of grouped figures.** `judge` counts coverage per blit key; a figure delivered as a
-  `grupo:` key replaces rows that keep their own keys, so coverage can read 0 % while the figure
-  is in fact replaced.
+- **Coverage of grouped figures.** A figure delivered as a `grupo:` key replaces rows that keep
+  their own blit keys, so the coverage *by blits* can read 0 % while the figure is replaced; read
+  the coverage by logical drawings, which `judge` reports separately.
 - **Games that compose off-screen.** If a game draws into its own RAM buffers and copies to
   video memory in a way the blit telemetry does not see, the capture comes out empty; `capture`
   detects it and stops instead of handing out an empty brief.

@@ -53,9 +53,11 @@ What does not work, or works with conditions. Every item was measured, not assum
   move by erasing and redrawing every frame never match, so their HD versions appear pierced,
   with original pixels through the holes. Visible in the bundled sample. Static screens,
   backgrounds and UI elements are not affected.
-- **Coverage of grouped figures.** `remake judge` counts coverage per blit key; a figure
-  delivered under a `grupo:` key replaces rows that keep their own keys, so the reported
-  coverage can be 0 % while the figure is replaced.
+- **Coverage of grouped figures.** A figure delivered under a `grupo:` key replaces rows that
+  keep their own blit keys, so the coverage *by blits* can read 0 % while the figure is
+  replaced. `remake judge` reports the coverage by logical drawings separately; read that one.
+- **Exports made before `pakuport-host.json`.** `remake capture` refuses an export without that
+  contract and prints the command that regenerates it. Regenerate once.
 - **What the blit telemetry sees.** Block copies (`movs`/`stos`) only; pixels written one `mov`
   at a time have no identity there (use `PAKU_PROC_PIXEL`). Games that compose in their own RAM
   pages and never write through the video window produce an empty capture; `capture` detects it
