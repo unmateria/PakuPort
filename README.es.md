@@ -86,20 +86,27 @@ idénticas byte a byte a las del original.
 
 ## Empezar
 
-Necesitas Windows, el [SDK de .NET 10](https://dotnet.microsoft.com/download) y Python 3.10+.
+**¿Sólo quieres ver un juego porteado?** Descarga
+[`JugarCatch-win-x64.zip`](https://github.com/unmateria/PakuPort/releases/latest/download/JugarCatch-win-x64.zip), descomprímelo y
+haz doble clic en `JugarCatch.exe`: el juego de ejemplo, porteado por PakuPort, sin instalar nada.
+
+**Para portear y rehacer juegos** necesitas Windows, el [SDK de .NET 10](https://dotnet.microsoft.com/download)
+y Python 3.10+. Descarga [`PakuPort-win-x64.zip`](https://github.com/unmateria/PakuPort/releases/latest/download/PakuPort-win-x64.zip)
+(el repositorio con la línea de comandos ya compilada en `bin\`), o clónalo y compílalo:
 
 ```powershell
-git clone <este repositorio> pakuport
+git clone https://github.com/unmateria/PakuPort pakuport
 cd pakuport
 dotnet build PakuPort.slnx -c Release
 python tools\selftest.py
 ```
 
 `selftest.py` recorre la cadena entera sobre el juego de ejemplo y tiene que acabar en
-`SELFTEST: GREEN`. Después portea tú el ejemplo:
+`SELFTEST: GREEN`. Después portea tú el ejemplo. `pakuport.cmd`, en la raíz, lanza la línea de comandos (la ya
+compilada de `bin\` si está, y si no `dotnet run` sobre `src\`):
 
 ```powershell
-dotnet run -c Release --project src\PakuPort.Cli -- port samples\catch\dos\CATCH.COM --no-package
+.\pakuport port samples\catch\dos\CATCH.COM --no-package
 cd export\catch
 dotnet run -c Release
 ```

@@ -84,20 +84,28 @@ byte-identical to the original's.
 
 ## Quick start
 
-You need Windows, the [.NET 10 SDK](https://dotnet.microsoft.com/download) and Python 3.10+.
+**Just want to see a ported game?** Download
+[`JugarCatch-win-x64.zip`](https://github.com/unmateria/PakuPort/releases/latest/download/JugarCatch-win-x64.zip), unzip it and
+double-click `JugarCatch.exe`: the bundled sample game, ported by PakuPort, with nothing to
+install.
+
+**To port and remake games** you need Windows, the [.NET 10 SDK](https://dotnet.microsoft.com/download)
+and Python 3.10+. Either download [`PakuPort-win-x64.zip`](https://github.com/unmateria/PakuPort/releases/latest/download/PakuPort-win-x64.zip)
+(the repository with the command line already built in `bin\`), or clone and build it:
 
 ```powershell
-git clone <this repository> pakuport
+git clone https://github.com/unmateria/PakuPort pakuport
 cd pakuport
 dotnet build PakuPort.slnx -c Release
 python tools\selftest.py
 ```
 
 `selftest.py` runs the whole chain on the bundled sample and must end with `SELFTEST: GREEN`.
-Then port the sample yourself:
+Then port the sample yourself. `pakuport.cmd`, in the repository root, runs the command line
+(the prebuilt one in `bin\` if it is there, otherwise `dotnet run` on `src\`):
 
 ```powershell
-dotnet run -c Release --project src\PakuPort.Cli -- port samples\catch\dos\CATCH.COM --no-package
+.\pakuport port samples\catch\dos\CATCH.COM --no-package
 cd export\catch
 dotnet run -c Release
 ```

@@ -40,6 +40,7 @@ Follow [CONTRIBUTING.md](CONTRIBUTING.md). The non-negotiables:
 
 ## Running commands
 
-`pakuport <command>` means `dotnet run -c Release --project src/PakuPort.Cli -- <command>`, run
+`pakuport <command>` means `.\pakuport.cmd <command>` (the prebuilt `bin\` if present, otherwise
+`dotnet run -c Release --project src/PakuPort.Cli -- <command>`), run
 from the repository root. Command-line messages are partly in Spanish; the documentation in
 `docs/` is in English.

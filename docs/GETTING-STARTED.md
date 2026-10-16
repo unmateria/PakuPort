@@ -40,13 +40,10 @@ Every command is run from the repository root:
 dotnet run -c Release --project src\PakuPort.Cli -- <command> [arguments]
 ```
 
-The rest of the documentation writes this as `pakuport <command>`. If you prefer a real
-`pakuport` command, publish the CLI once and put it on your `PATH`:
-
-```powershell
-dotnet publish src\PakuPort.Cli -c Release -o tools-bin
-$env:PATH += ";$PWD\tools-bin"     # the executable is tools-bin\PakuPort.Cli.exe
-```
+The rest of the documentation writes this as `pakuport <command>`, and `pakuport.cmd` in the
+repository root does exactly that: `.\pakuport <command>` (in `cmd.exe`, just `pakuport`). It
+runs the prebuilt command line in `bin\` when there is one (the release download
+`PakuPort-win-x64.zip` ships it), and `dotnet run` on `src\` otherwise. Run it from the root.
 
 ## Port your first program
 
@@ -95,7 +92,7 @@ Without `--no-package`, `port` also publishes a self-contained `Jugar<Game>.exe`
 | Ctrl+F10 | release the mouse |
 | Ctrl+F1 / Ctrl+F2 | slower / faster CPU |
 | Ctrl+F3 | back to the speed in `game.json` |
-| Ctrl+F12 | quit |
+| F12 | quit (Esc belongs to the game) |
 
 Every other key goes to the game.
 

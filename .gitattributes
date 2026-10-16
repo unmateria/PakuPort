@@ -2,6 +2,7 @@
 *.cs text eol=crlf
 *.csproj text eol=crlf
 *.slnx text eol=crlf
+*.cmd text eol=crlf
 *.COM binary
 *.BIN binary
 *.bin binary

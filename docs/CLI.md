@@ -1,7 +1,8 @@
 # PakuPort CLI reference
 
 Every command below is written as `pakuport <command>`, which stands for
-`dotnet run -c Release --project src\PakuPort.Cli --` run from the repository root. Run it from
+`dotnet run -c Release --project src\PakuPort.Cli --` run from the repository root
+(`pakuport.cmd` in the root does it for you). Run it from
 the root: most commands read and write relative paths such as `games\<id>\`, `export\<id>\` and
 `entrega\`.
 
