@@ -26,6 +26,50 @@ creerle.
 *CATCH, el pequeño juego DOS original que viene en [`samples/catch`](samples/catch), corriendo
 como programa .NET tras `pakuport port`.*
 
+## Lo que hace bien
+
+- **Ejecuta lo que ejecutaría la CPU, no lo que adivina un desensamblador.** En software de DOS,
+  distinguir el código de los datos es indecidible: tablas de saltos, código automodificable,
+  overlays, ejecutables comprimidos, protecciones que se descifran a sí mismas al arrancar.
+  PakuPort no intenta adivinarlo: interpreta los bytes originales, así que todo eso simplemente
+  funciona.
+- **Juegos de 16 y de 32 bits.** Modo real, modo protegido de 16 bits, modo plano de 32 bits con
+  DOS/4GW y otros extensores (también los que van metidos dentro del juego), paginación, VESA, y
+  juegos que saltan una y otra vez entre código de 16 y de 32 bits.
+- **Apunta lo que vio, no lo que supone.** Como el juego corre bajo su control, PakuPort puede
+  grabar cada llamada a cada función con lo que entró y lo que salió, qué código se ejecutó de
+  verdad, quién pintó cada píxel y quién hizo sonar cada sonido. Un desensamblador sólo puede
+  ofrecer conjeturas; esto es el registro de lo que pasó.
+- **Un juez, no una opinión.** Tu versión en C# de una función se repite contra llamadas reales
+  grabadas y se compara con el original byte a byte: registros, banderas, memoria y hasta el
+  número de instrucciones. Verde o rojo. Si ni el binario original reproduce un caso, el juez lo
+  declara *injuzgable* en vez de echarte la culpa.
+- **Pieza a pieza, con el juego en marcha.** Una función traducida se enchufa al juego mientras
+  corre, y todo lo que aún no has traducido lo sigue haciendo el binario original. No hace falta
+  tener el remake entero para jugarlo, y un control A/B demuestra que la memoria y la pantalla
+  quedan idénticas byte a byte.
+- **Repetible hasta el byte.** El reloj del juego es el contador de instrucciones. Con la misma
+  cinta de entrada y el mismo corte, dos corridas dejan cero bytes de diferencia, así que si algo
+  cambia, lo has cambiado tú.
+- **Pensado para la IA, sin fiarse de la IA.** Cada función es una carpeta autónoma con hechos
+  medidos y un único fichero que escribir. El modelo recibe hechos en vez de conjeturas, y el
+  juez decide si su respuesta está bien. Las mismas carpetas sirven a una persona sin ninguna IA.
+- **Arte HD por identidad.** Cada sprite se identifica en el momento en que el juego lo dibuja, no
+  buscando píxeles en la pantalla después. El kit redacta el encargo de cada asset, rechaza las
+  entregas que romperían el juego y cambia el arte mientras se juega, sin tocar la memoria del
+  juego.
+- **Una plataforma comprobada contra una referencia.** Pequeños programas DOS sintéticos comparan
+  PakuPort con DOSBox-X subsistema a subsistema, y cada comprobación del proyecto se ha visto
+  fallar a propósito antes de fiarse de ella.
+- **Un `.exe` de doble clic al final.** El port es un programa .NET normal; `port` puede además
+  empaquetarlo como un ejecutable autónomo para jugar.
+
+Medido en uno de los juegos de prueba del autor, un arcade comercial de principios de los 80: se
+ha rehecho entero en C# con el tablero y el juez, 61 piezas. Una partida grabada de 398 millones
+de instrucciones (título, menú, todas las fases, fin de partida y récords) corre sin que el
+intérprete ejecute ni una sola instrucción del original, y la memoria y la pantalla salen
+idénticas byte a byte a las del original.
+
 ## Qué trae
 
 | | |

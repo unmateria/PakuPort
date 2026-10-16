@@ -124,8 +124,10 @@ These are measured failures, not hypotheticals:
    ran; code that never ran has no test. A model that "completes" it is guessing — make it leave
    such paths as close to the original as possible and say so.
 6. **Loop iterations are not functions.** A folder whose header says *VUELTA DE BUCLE* returns
-   the address where execution continues, has no `ret` and must leave `SP` as it found it. Its
-   translation is judged, but cannot be plugged into the game yet.
+   the address where execution continues (the loop head for another iteration, or the exit),
+   has no `ret` and must leave `SP` as it found it. Its translation returns that address as a
+   `ushort`; the judge compares it with the recorded one, and `export --portadas` continues the
+   game there.
 
 ## Measuring how much the material helps
 

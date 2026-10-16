@@ -25,6 +25,49 @@ trusted.
 *CATCH, the tiny original DOS game bundled in [`samples/catch`](samples/catch), running as a
 .NET program after `pakuport port`.*
 
+## What it does well
+
+- **It runs what the CPU would run, not what a disassembler guesses.** In DOS software, telling
+  code from data is undecidable: jump tables, self-modifying code, overlays, packed executables,
+  copy protections that decrypt themselves at run time. PakuPort does not try to guess. It
+  interprets the original bytes, so all of that simply runs.
+- **16-bit and 32-bit games.** Real mode, 16-bit protected mode, 32-bit flat mode with DOS/4GW
+  and other extenders (including the ones embedded in the game), paging, VESA, and games that
+  jump back and forth between 16- and 32-bit code.
+- **It writes down what it saw, not what it supposes.** Because the game runs under its control,
+  PakuPort can record every call to every function with what went in and what came out, which
+  code actually ran, who drew each pixel and who played each sound. A disassembler can only
+  offer guesses; this is a log of what happened.
+- **A judge, not an opinion.** Your C# version of a function is replayed against real recorded
+  calls and compared with the original byte by byte: registers, flags, memory and even the
+  number of instructions. Green or red. If even the original binary cannot reproduce a case, the
+  judge says *unjudgeable* instead of blaming you.
+- **One piece at a time, with the game running.** A translated function plugs into the running
+  game; everything you have not translated yet keeps running from the original binary. You
+  never need the whole remake working before you can play it, and an A/B control proves that
+  memory and screen stay identical byte for byte.
+- **Repeatable to the byte.** The game's clock is the instruction counter. With the same input
+  tape and the same cut, two runs leave zero bytes of difference, so a change in behaviour is
+  always your change.
+- **Made for AI, without trusting the AI.** Each function is a self-contained folder with
+  measured facts and one file to write. A model gets facts instead of guesses, and the judge
+  decides whether its answer is right. The same folders work for a person with no AI at all.
+- **HD art by identity.** Each sprite is identified at the moment the game draws it, not by
+  matching pixels on the screen afterwards. The kit writes the brief for every asset, rejects
+  deliveries that would break the game and swaps the art in while the game runs, without
+  touching the game's memory.
+- **A platform checked against a reference.** Small synthetic DOS programs compare PakuPort with
+  DOSBox-X subsystem by subsystem, and every check in the project has been seen failing on
+  purpose before it is trusted.
+- **A double-click `.exe` at the end.** The port is a normal .NET program; `port` can also
+  package it as a self-contained executable to play.
+
+Measured on one of the author's test games, an early-1980s commercial arcade game: it has been
+rebuilt entirely in C# with the board and the judge, 61 pieces. A full recorded session of 398
+million instructions (title, menu, every phase, game over and high scores) runs without the
+interpreter executing a single instruction of the original, and memory and screen come out
+byte-identical to the original's.
+
 ## What is in the box
 
 | | |

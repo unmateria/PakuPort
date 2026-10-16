@@ -39,8 +39,6 @@ What does not work, or works with conditions. Every item was measured, not assum
   which compares the screen) is the real check for those.
 - **Coverage is what was played.** The judge tests the paths the recording exercised. The board
   says how much of each function ran; the rest has no test.
-- **Loop iterations cannot be plugged in.** A *vuelta de bucle* unit is judged, but
-  `export --portadas` only hooks function entries.
 - **The legacy lifted-code commands** (`verify`, `emit`, `decode`, …) read MZ executables only;
   on anything else they refuse. They belong to the pipeline before the interpreter; use the
   board and `banco juzga`.
